@@ -1,5 +1,3 @@
-import './globals.css'
-
 export default {
   logo: (
     <div className="flex items-center gap-2">
