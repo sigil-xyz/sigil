@@ -1,0 +1,21 @@
+[workspace]
+members = [
+    "programs/*"
+]
+resolver = "2"
+
+[workspace.lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }
+
+[workspace.lints.clippy]
+# Triggered by Anchor's #[program] macro expansion — not actionable
+diverging_sub_expression = "allow"
+
+[profile.release]
+overflow-checks = true
+lto = "fat"
+codegen-units = 1
+[profile.release.build-override]
+opt-level = 3
+incremental = false
+codegen-units = 1

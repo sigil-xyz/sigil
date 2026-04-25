@@ -1,0 +1,19 @@
+[toolchain]
+package_manager = "bun"
+
+[features]
+resolution = true
+skip-lint = false
+
+[programs.devnet]
+credential = "ZFK63KBXDhGCYm5orVo5QiTBaBhWD4PUcUDBG6fjTkH"
+registry = "Ecmeikh16PZNtNUY5ZTQAKLSdkQWpx6uRo6gUTkoBURW"
+
+[provider]
+cluster = "devnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "cargo test"
+
+[hooks]
