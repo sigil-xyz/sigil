@@ -1,0 +1,28 @@
+# Solana / Anchor
+target/
+.anchor/
+*-keypair.json
+
+# Rust
+# Cargo.lock is committed — binary workspace requires reproducible builds
+
+# Node
+node_modules/
+dist/
+.next/
+*.log
+package-lock.json
+bun.lockb
+
+# Environments
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+.direnv/
+.vscode/
+.idea/
