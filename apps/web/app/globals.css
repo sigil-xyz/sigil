@@ -1,0 +1,242 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-geist-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.12 0 0);
+  --header-bg: rgba(255, 255, 255, 0.98);
+  --header-bg-zero: rgba(255, 255, 255, 0);
+  --fade-bg: rgba(255, 255, 255, 1);
+  --fade-bg-zero: rgba(255, 255, 255, 0);
+  --dot-color: oklch(0.5 0 0 / 0.15);
+  --header-border: rgba(0, 0, 0, 0.1);
+  --header-border-zero: rgba(0, 0, 0, 0);
+  --card: oklch(0.995 0 0);
+  --card-foreground: oklch(0.12 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.12 0 0);
+  --primary: oklch(0.12 0 0);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.985 0 0);
+  --secondary-foreground: oklch(0.2 0 0);
+  --muted: oklch(0.975 0 0);
+  --muted-foreground: oklch(0.45 0 0);
+  --accent: oklch(0.98 0 0);
+  --accent-foreground: oklch(0.15 0 0);
+  --destructive: oklch(0.55 0.2 25);
+  --border: oklch(0.95 0 0);
+  --input: oklch(0.95 0 0);
+  --ring: oklch(0.12 0 0);
+  --radius: 0.6rem;
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.15 0 0);
+  --sidebar-primary: oklch(0.12 0 0);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.98 0 0);
+  --sidebar-accent-foreground: oklch(0.15 0 0);
+  --sidebar-border: oklch(0.95 0 0);
+  --sidebar-ring: oklch(0.12 0 0);
+}
+
+/* Dark mode removed to ensure light-only experience */
+
+/* ─── Global Typography ─── */
+body {
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Line reveal ─── */
+.line-reveal-parent {
+  overflow: hidden;
+  display: inline-block;
+  padding-bottom: 0.25em;
+  margin-bottom: -0.25em;
+}
+
+/* ─── Cinematic Background Patterns ─── */
+.dot-grid {
+  background-image: radial-gradient(circle, var(--dot-color) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.sigil-ripple {
+  background-image: 
+    radial-gradient(circle at 50% 50%, transparent 0%, transparent 20%, oklch(0.5 0 0 / 0.03) 20.5%, transparent 21%),
+    radial-gradient(circle at 50% 50%, transparent 0%, transparent 40%, oklch(0.5 0 0 / 0.03) 40.5%, transparent 41%),
+    radial-gradient(circle at 50% 50%, transparent 0%, transparent 60%, oklch(0.5 0 0 / 0.03) 60.5%, transparent 61%),
+    radial-gradient(circle at 50% 50%, transparent 0%, transparent 80%, oklch(0.5 0 0 / 0.03) 80.5%, transparent 81%);
+  background-size: 100% 100%;
+}
+
+.zen-ripples {
+  background: 
+    radial-gradient(circle at 50% 50%, transparent 150px, oklch(0.5 0 0 / 0.02) 151px, transparent 152px),
+    radial-gradient(circle at 50% 50%, transparent 300px, oklch(0.5 0 0 / 0.02) 301px, transparent 302px),
+    radial-gradient(circle at 50% 50%, transparent 450px, oklch(0.5 0 0 / 0.02) 451px, transparent 452px),
+    radial-gradient(circle at 50% 50%, transparent 600px, oklch(0.5 0 0 / 0.02) 601px, transparent 602px),
+    radial-gradient(circle at 50% 50%, transparent 750px, oklch(0.5 0 0 / 0.02) 751px, transparent 752px),
+    radial-gradient(circle at 50% 50%, transparent 900px, oklch(0.5 0 0 / 0.02) 901px, transparent 902px);
+}
+
+/* ─── Marquee ─── */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.marquee-wrapper {
+  contain: paint;
+  isolation: isolate;
+}
+.marquee-inner {
+  animation: marquee 40s linear infinite;
+}
+.marquee-inner:hover {
+  animation-play-state: paused;
+}
+
+/* ─── Cinematic display headings ─── */
+.hero-display {
+  font-family: var(--font-display), "Cormorant Garamond", "Georgia", serif;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1.0;
+}
+
+/* ─── Scroll progress bar ─── */
+.scroll-line {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: var(--foreground);
+  transform-origin: left;
+  z-index: 9999;
+}
+
+/* ─── Solana Wallet Adapter Overrides ─── */
+.wallet-adapter-button {
+  font-family: var(--font-mono) !important;
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  border-radius: 0 !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.wallet-adapter-button:not([disabled]):hover {
+  background-color: rgba(0, 0, 0, 0.02) !important;
+  border-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+.wallet-adapter-button:not([disabled]):focus-visible {
+  outline: 1px solid var(--foreground) !important;
+}
+
+/* Specific class overrides to kill the purple */
+.wallet-adapter-button-trigger {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+}
+
+.wallet-adapter-modal-wrapper {
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+  border-radius: 0 !important;
+  font-family: var(--font-mono) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.1) !important;
+}
+
+.wallet-adapter-modal-button-close {
+  background: var(--muted) !important;
+  color: var(--foreground) !important;
+}
+
+.wallet-adapter-modal-title {
+  color: var(--foreground) !important;
+  font-family: var(--font-display) !important;
+  font-weight: 400 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  font-size: 20px !important;
+}
+
+.wallet-adapter-modal-list .wallet-adapter-button {
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+  border: 1px solid var(--border) !important;
+  margin-bottom: 8px !important;
+}
+
+.wallet-adapter-modal-list .wallet-adapter-button:hover {
+  background: var(--muted) !important;
+}
+
+.wallet-adapter-dropdown-list {
+  background: var(--background) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05) !important;
+}
+
+.wallet-adapter-dropdown-list-item {
+  color: var(--foreground) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 11px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  padding: 12px 20px !important;
+}
+
+.wallet-adapter-dropdown-list-item:hover {
+  background: var(--muted) !important;
+}
