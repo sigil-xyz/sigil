@@ -1,0 +1,111 @@
+---
+title: Express
+description: Protect Express routes with Sigil credential verification.
+---
+
+## Install
+
+```bash
+npm install @sigil/x402 express
+```
+
+## Basic usage
+
+```ts
+import express from 'express'
+import { createSigilMiddleware } from '@sigil/x402'
+import { Connection } from '@solana/web3.js'
+import BN from 'bn.js'
+
+const app = express()
+const connection = new Connection(process.env.SOLANA_RPC_URL!, 'confirmed')
+
+app.post(
+  '/api/generate',
+  createSigilMiddleware({
+    connection,
+    serverWallet,                       // your server's signing wallet
+    requiredCapability: 'image-generation',
+    spendAmount: new BN(50_000),        // 0.05 USDC per request
+  }),
+  (req, res) => {
+    const agentPubkey = (req as any).sigilAgent // base58 verified agent pubkey
+    res.json({ result: 'generated', agent: agentPubkey })
+  }
+)
+```
+
+## Verification only (no spend)
+
+Omit `spendAmount` (or set it to `new BN(0)`) to verify the Sigil without recording any spend. Useful for reading endpoints or when you handle billing separately.
+
+```ts
+app.get(
+  '/api/profile',
+  createSigilMiddleware({
+    connection,
+    serverWallet,
+    requiredCapability: 'read-profile',
+    // no spendAmount → verify only
+  }),
+  handler
+)
+```
+
+## Applying to multiple routes
+
+```ts
+import { Router } from 'express'
+
+const authedRouter = Router()
+
+// Apply once to the router — all routes under it are protected
+authedRouter.use(
+  createSigilMiddleware({
+    connection,
+    serverWallet,
+    requiredCapability: 'api-access',
+    spendAmount: new BN(10_000),
+  })
+)
+
+authedRouter.get('/data', dataHandler)
+authedRouter.post('/action', actionHandler)
+
+app.use('/api', authedRouter)
+```
+
+## TypeScript: accessing sigilAgent
+
+The middleware attaches the verified agent pubkey to `req.sigilAgent`. Extend the `Request` type to avoid casting:
+
+```ts
+// types/express.d.ts
+import 'express'
+
+declare module 'express' {
+  interface Request {
+    sigilAgent?: string
+  }
+}
+```
+
+Then in your handlers:
+
+```ts
+app.post('/api/generate', middleware, (req, res) => {
+  console.log(req.sigilAgent) // typed as string | undefined
+})
+```
+
+## Error responses
+
+The middleware returns `402 Payment Required` on any failure. Common rejection reasons:
+
+| Reason | What to fix |
+|--------|-------------|
+| `Missing required headers` | Agent must include all three `x-sigil-*` headers |
+| `Request timestamp is expired` | Agent clock is skewed — re-generate headers closer to request time |
+| `Signature verification failed` | Agent is signing with the wrong keypair or wrong message format |
+| `Agent Sigil is invalid or lacks capability` | Principal needs to issue or update the Sigil |
+| `record_spend failed` | Agent has hit its daily spend limit |

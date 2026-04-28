@@ -18,7 +18,7 @@ const navLinks = [
   { href: "#features", label: "Features" },
   { href: "#integrations", label: "Integrations" },
   {
-    href: "https://github.com/sigil-xyz/sigil",
+    href: "https://docs.sigil.xyz",
     label: "Docs",
     external: true,
   },

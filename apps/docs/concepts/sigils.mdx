@@ -1,0 +1,94 @@
+---
+title: Sigil Credentials
+description: On-chain credentials that bind an agent to a principal with spend limits and capability scopes.
+---
+
+A Sigil is a Program Derived Account (PDA) on Solana that represents the authorization a principal has granted to a specific agent keypair.
+
+## Account structure
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `agentPubkey` | `PublicKey` | The agent's ed25519 keypair address |
+| `principalPubkey` | `PublicKey` | The account that issued this Sigil |
+| `capabilities` | `Capability[]` | Scoped permissions (category + allowed domains) |
+| `spendLimitPerTx` | `u64` | Max spend per single transaction (micro-USDC) |
+| `spendLimitPerDay` | `u64` | Max spend per rolling 24-hour window (micro-USDC) |
+| `spentToday` | `u64` | Running daily tally, reset by `record_spend` |
+| `issuedAt` | `i64` | Unix timestamp of issuance |
+| `expiresAt` | `i64` | Unix timestamp of expiry |
+| `revoked` | `bool` | Permanent revocation flag |
+
+## PDA derivation
+
+```
+seeds  = [b"sigil", agent_pubkey]
+program = credential_program_id
+```
+
+Each agent keypair maps to exactly one Sigil PDA. You cannot issue two Sigils for the same agent.
+
+## Capabilities
+
+A capability scopes what the agent is permitted to do:
+
+```ts
+{
+  category: 'image-generation',      // max 32 bytes
+  allowedDomains: ['api.openai.com'] // max 5 entries, 64 bytes each
+}
+```
+
+- **`category`** is what services match against (e.g. `requiredCapability: 'image-generation'`).
+- **`allowedDomains`** lists the domains the agent may hit under that category. Services can enforce this or treat it as informational.
+
+A Sigil can hold multiple capabilities — one per use-case the principal grants.
+
+## Spend limits
+
+All amounts are in **micro-USDC** (6 decimal places):
+
+```
+1 USDC = 1_000_000 micro-USDC
+```
+
+When the x402 middleware records a spend, the on-chain program:
+
+<Steps>
+  <Step title="Check daily reset">
+    If 24 hours have passed since `lastReset`, reset `spentToday` to zero.
+  </Step>
+  <Step title="Assert per-tx limit">
+    Reject if `amount > spendLimitPerTx`.
+  </Step>
+  <Step title="Assert daily limit">
+    Reject if `spentToday + amount > spendLimitPerDay`.
+  </Step>
+  <Step title="Record spend">
+    Increment `spentToday` by `amount`.
+  </Step>
+</Steps>
+
+This enforcement is on-chain — it cannot be bypassed by the middleware or the agent.
+
+## Lifecycle
+
+```
+issueSigil ──► [active] ──► updateSigil   (adjust limits / expiry)
+                        ──► revokeSigil   (permanent, cannot be undone)
+                        ──► [expired]     (expiresAt passed)
+```
+
+Only the **principal** keypair can issue, update, or revoke a Sigil. The **agent** keypair only signs requests to prove identity — it never writes to the Sigil account.
+
+## Verification logic
+
+`client.verifySigil(agent, options?)` returns `true` when **all** of the following hold:
+
+- The Sigil PDA exists on-chain
+- `revoked === false`
+- `expiresAt > now`
+- If `requiredCapability` set: at least one capability has that category
+- If `maxSpendAmount` set: `spendLimitPerTx >= maxSpendAmount`
+
+The method returns `false` (never throws) when the account does not exist.

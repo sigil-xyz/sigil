@@ -1,0 +1,81 @@
+---
+title: SigilClient
+description: The single entry point for all Sigil program interactions.
+---
+
+`SigilClient` wraps both the Credential and Registry Anchor programs. Construct one client per wallet and reuse it across calls.
+
+## Constructor
+
+```ts
+import { SigilClient } from '@sigil/sdk'
+
+const client = new SigilClient(config: SigilClientConfig)
+```
+
+### SigilClientConfig
+
+```ts
+interface SigilClientConfig {
+  connection: Connection           // @solana/web3.js Connection
+  wallet: AnchorProvider['wallet'] // must be able to sign transactions
+}
+```
+
+The `wallet` field expects an object implementing:
+
+```ts
+{
+  publicKey: PublicKey
+  signTransaction<T extends Transaction | VersionedTransaction>(tx: T): Promise<T>
+  signAllTransactions<T extends Transaction | VersionedTransaction>(txs: T[]): Promise<T[]>
+}
+```
+
+This matches the `AnchorProvider["wallet"]` interface. Wallet adapters from `@solana/wallet-adapter-react` satisfy it directly.
+
+## PDA helpers
+
+Use these to derive addresses without making RPC calls.
+
+### sigilPda
+
+```ts
+client.sigilPda(agent: PublicKey): [PublicKey, number]
+```
+
+Returns `[pda, bump]` for the Sigil credential of a given agent. Derived from `["sigil", agentPubkey]` on the credential program.
+
+### listingPda
+
+```ts
+client.listingPda(sigil: PublicKey): [PublicKey, number]
+```
+
+Returns `[pda, bump]` for the Registry listing of a given Sigil PDA. Derived from `["listing", sigilPda]` on the registry program.
+
+## Example setup
+
+```ts
+import { SigilClient } from '@sigil/sdk'
+import { Connection, Keypair } from '@solana/web3.js'
+import { readFileSync } from 'fs'
+
+const connection = new Connection(
+  process.env.SOLANA_RPC_URL ?? 'https://api.devnet.solana.com',
+  'confirmed'
+)
+
+const keypair = Keypair.fromSecretKey(
+  Uint8Array.from(JSON.parse(readFileSync(process.env.KEYPAIR_PATH!, 'utf-8')))
+)
+
+const client = new SigilClient({
+  connection,
+  wallet: {
+    publicKey: keypair.publicKey,
+    signTransaction: async (tx) => { tx.sign(keypair); return tx },
+    signAllTransactions: async (txs) => { txs.forEach(tx => tx.sign(keypair)); return txs },
+  },
+})
+```
