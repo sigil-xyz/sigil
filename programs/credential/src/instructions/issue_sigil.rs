@@ -20,7 +20,7 @@ pub struct IssueSigil<'info> {
         init,
         payer = principal,
         space = Sigil::space(params.capabilities.len()),
-        seeds = [SIGIL_SEED, params.agent_pubkey.as_ref()],
+        seeds = [SIGIL_SEED, principal.key().as_ref(), params.agent_pubkey.as_ref()],
         bump
     )]
     pub sigil: Account<'info, Sigil>,

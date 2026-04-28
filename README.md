@@ -123,7 +123,7 @@ sigil/
 │   ├── x402/           # Payment Gating
 │   └── mcp/            # MCP Verification
 ├── apps/               # Reference Implementations
-│   └── dashboard/      # Next.js 15 Principal Interface
+│   └── web/            # Next.js 15 Principal Interface
 └── Anchor.toml         # Program configuration
 ```
 

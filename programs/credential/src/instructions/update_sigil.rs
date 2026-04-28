@@ -15,7 +15,7 @@ pub struct UpdateSigilParams {
 pub struct UpdateSigil<'info> {
     #[account(
         mut,
-        seeds = [SIGIL_SEED, sigil.agent_pubkey.as_ref()],
+        seeds = [SIGIL_SEED, sigil.principal_pubkey.as_ref(), sigil.agent_pubkey.as_ref()],
         bump = sigil.bump,
     )]
     pub sigil: Account<'info, Sigil>,

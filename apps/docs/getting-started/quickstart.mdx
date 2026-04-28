@@ -39,7 +39,7 @@ Spend amounts are in micro-USDC (6 decimal places). `1_000_000` = 1 USDC.
 Fetch the credential right after to confirm it's on-chain:
 
 ```ts
-const sigil = await client.getSigil(agentPublicKey)
+const sigil = await client.getSigil(agentPublicKey, principalWallet.publicKey)
 console.log(sigil.capabilities, sigil.spendLimitPerTx.toString())
 ```
 

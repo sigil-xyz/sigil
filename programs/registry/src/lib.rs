@@ -26,4 +26,8 @@ pub mod registry {
     pub fn deactivate_listing(ctx: Context<DeactivateListing>) -> Result<()> {
         instructions::deactivate_listing::handler(ctx)
     }
+
+    pub fn update_stats(ctx: Context<UpdateStats>, params: UpdateStatsParams) -> Result<()> {
+        instructions::update_stats::handler(ctx, params)
+    }
 }

@@ -1,6 +1,7 @@
 pub mod deactivate_listing;
 pub mod list_agent;
 pub mod update_listing;
+pub mod update_stats;
 
 #[allow(ambiguous_glob_reexports)]
 pub use deactivate_listing::*;
@@ -8,3 +9,5 @@ pub use deactivate_listing::*;
 pub use list_agent::*;
 #[allow(ambiguous_glob_reexports)]
 pub use update_listing::*;
+#[allow(ambiguous_glob_reexports)]
+pub use update_stats::*;

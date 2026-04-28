@@ -25,6 +25,7 @@ export interface UpdateSigilArgs {
 }
 
 export interface VerifySigilOptions {
+  principal: PublicKey;
   requiredCapability?: string;
   maxSpendAmount?: BN;
 }

@@ -22,11 +22,11 @@ A Sigil is a Program Derived Account (PDA) on Solana that represents the authori
 ## PDA derivation
 
 ```
-seeds  = [b"sigil", agent_pubkey]
+seeds  = [b"sigil", principal_pubkey, agent_pubkey]
 program = credential_program_id
 ```
 
-Each agent keypair maps to exactly one Sigil PDA. You cannot issue two Sigils for the same agent.
+Each unique pair of (Principal + Agent) maps to exactly one Sigil PDA. This architecture allows an agent to serve multiple principals, each with their own isolated spend limits and capabilities.
 
 ## Capabilities
 
@@ -83,7 +83,7 @@ Only the **principal** keypair can issue, update, or revoke a Sigil. The **agent
 
 ## Verification logic
 
-`client.verifySigil(agent, options?)` returns `true` when **all** of the following hold:
+`client.verifySigil(agent, { principal, ...options })` returns `true` when **all** of the following hold:
 
 - The Sigil PDA exists on-chain
 - `revoked === false`

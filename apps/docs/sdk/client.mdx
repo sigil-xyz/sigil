@@ -41,10 +41,10 @@ Use these to derive addresses without making RPC calls.
 ### sigilPda
 
 ```ts
-client.sigilPda(agent: PublicKey): [PublicKey, number]
+client.sigilPda(agent: PublicKey, principal: PublicKey): [PublicKey, number]
 ```
 
-Returns `[pda, bump]` for the Sigil credential of a given agent. Derived from `["sigil", agentPubkey]` on the credential program.
+Returns `[pda, bump]` for the Sigil credential issued by a principal to a given agent. Derived from `["sigil", principalPubkey, agentPubkey]` on the credential program.
 
 ### listingPda
 

@@ -29,22 +29,25 @@ export async function verifySigilRequest(
   };
 
   const agentStr = get("x-sigil-agent");
+  const principalStr = get("x-sigil-principal");
   const timestampStr = get("x-sigil-timestamp");
   const sigStr = get("x-sigil-signature");
 
-  if (!agentStr || !timestampStr || !sigStr) {
+  if (!agentStr || !principalStr || !timestampStr || !sigStr) {
     return {
       ok: false,
-      reason: "Missing required headers: x-sigil-agent, x-sigil-timestamp, x-sigil-signature",
+      reason: "Missing required headers: x-sigil-agent, x-sigil-principal, x-sigil-timestamp, x-sigil-signature",
     };
   }
 
-  // 1. Parse agent pubkey
+  // 1. Parse agent and principal pubkeys
   let agentPubkey: PublicKey;
+  let principalPubkey: PublicKey;
   try {
     agentPubkey = new PublicKey(agentStr);
+    principalPubkey = new PublicKey(principalStr);
   } catch {
-    return { ok: false, reason: "Invalid x-sigil-agent: not a valid Solana public key" };
+    return { ok: false, reason: "Invalid x-sigil-agent or x-sigil-principal: not a valid Solana public key" };
   }
 
   // 2. Check timestamp freshness
@@ -73,6 +76,7 @@ export async function verifySigilRequest(
   const client = new SigilClient({ connection: config.connection, wallet: config.serverWallet });
 
   const isValid = await client.verifySigil(agentPubkey, {
+    principal: principalPubkey,
     requiredCapability: config.requiredCapability,
     maxSpendAmount: spendAmount.isZero() ? undefined : spendAmount,
   });
@@ -89,7 +93,7 @@ export async function verifySigilRequest(
   // 5. Record the spend on-chain
   if (!spendAmount.isZero()) {
     try {
-      await client.recordSpend(agentPubkey, spendAmount);
+      await client.recordSpend(agentPubkey, spendAmount, principalPubkey);
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       return { ok: false, reason: `record_spend failed: ${msg}` };
