@@ -21,7 +21,7 @@ const navLinks = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/registry", label: "Registry" },
   { href: "/dashboard/profile", label: "Profile" },
-  { href: "https://docs.sigil.xyz", label: "Docs", external: true },
+  { href: "https://sigil-10dddbf2.mintlify.app/introduction", label: "Docs", external: true },
 ];
 
 function HamburgerIcon({ open }: { open: boolean }) {

@@ -12,12 +12,12 @@ const links = {
   Developers: [
     {
       label: "Documentation",
-      href: "https://docs.sigil.xyz",
+      href: "https://sigil-10dddbf2.mintlify.app/introduction",
       external: true,
     },
     {
       label: "SDK reference",
-      href: "https://docs.sigil.xyz/sdk/client",
+      href: "https://sigil-10dddbf2.mintlify.app/introduction",
       external: true,
     },
     {

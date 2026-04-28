@@ -146,7 +146,7 @@ export function HeroSection() {
           </div>
 
           <Link
-            href="https://docs.sigil.xyz"
+            href="https://sigil-10dddbf2.mintlify.app/introduction"
             target="_blank"
             rel="noopener noreferrer"
             className="group flex items-center gap-2 font-mono text-[11px] tracking-[0.2em] text-muted-foreground hover:text-foreground uppercase font-bold transition-colors mt-2"

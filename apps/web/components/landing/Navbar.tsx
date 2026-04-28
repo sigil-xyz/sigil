@@ -18,7 +18,7 @@ const navLinks = [
   { href: "#features", label: "Features" },
   { href: "#integrations", label: "Integrations" },
   {
-    href: "https://docs.sigil.xyz",
+    href: "https://sigil-10dddbf2.mintlify.app/introduction",
     label: "Docs",
     external: true,
   },
