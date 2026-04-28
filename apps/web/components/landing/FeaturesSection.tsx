@@ -94,28 +94,28 @@ function FeatureCard({
 
 export function FeaturesSection() {
   return (
-    <section id="features" className="relative min-h-screen flex items-center py-20 md:py-32 border-t border-border snap-start bg-background overflow-hidden">
+    <section id="features" className="relative min-h-screen flex items-center py-24 md:py-32 border-t border-border snap-start bg-background overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 zen-ripples opacity-[0.4] pointer-events-none" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[60%] bg-emerald-500/[0.02] blur-[120px] rounded-full pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 w-full relative z-10">
-        <div className="mb-20 md:mb-28 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-10 md:gap-16">
-          <div className="max-w-2xl">
+        <div className="mb-24 md:mb-32 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-10 md:gap-16">
+          <div className="max-w-3xl">
             <motion.span
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="font-mono text-[10px] md:text-[11px] tracking-[0.25em] text-muted-foreground/50 uppercase block mb-8"
+              className="font-mono text-[10px] md:text-[11px] tracking-[0.3em] text-muted-foreground/50 uppercase block mb-8"
             >
               Capabilities
             </motion.span>
-            <h2 className="hero-display text-[clamp(3.5rem,6vw,6rem)] text-foreground leading-[0.9] tracking-tighter">
+            <h2 className="hero-display text-[clamp(3.5rem,7vw,7rem)] text-foreground leading-[0.92] tracking-tighter">
               <LineReveal delay={0.05} className="block">
                 Everything
               </LineReveal>
-              <LineReveal delay={0.15} className="block italic">
+              <LineReveal delay={0.15} className="block italic text-foreground/90">
                 trust requires.
               </LineReveal>
             </h2>
@@ -124,8 +124,8 @@ export function FeaturesSection() {
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-[1.1rem] text-muted-foreground leading-relaxed max-w-[420px] lg:pb-3"
+            transition={{ duration: 0.7, delay: 0.3 }}
+            className="text-[1.15rem] text-muted-foreground/80 leading-relaxed max-w-[460px] lg:pb-4 font-medium"
           >
             A complete identity stack for the agent economy. Issue, verify,
             enforce, and build — all composable, all on-chain.

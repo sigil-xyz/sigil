@@ -56,7 +56,7 @@ function useCounter(target: number, duration: number, start: boolean, decimals =
 function StatItem({ stat, index }: { stat: (typeof stats)[0]; index: number }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const count = useCounter(stat.value, 2.4, isInView, stat.decimals);
+  const count = useCounter(stat.value, 2.8, isInView, stat.decimals);
 
   const display =
     stat.decimals > 0
@@ -68,19 +68,19 @@ function StatItem({ stat, index }: { stat: (typeof stats)[0]; index: number }) {
       ref={ref}
       initial={{ opacity: 0, y: 30, filter: "blur(4px)" }}
       animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
-      transition={{ duration: 1.2, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
-      className="flex flex-col gap-3 md:gap-4 py-12 md:py-16 px-6 md:px-8 border-b sm:border-b-0 sm:border-r border-background/10 last:border-b-0 sm:last:border-r-0"
+      transition={{ duration: 1.4, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+      className="flex flex-col gap-4 md:gap-6 py-16 md:py-24 px-6 md:px-10 border-b sm:border-b-0 sm:border-r border-background/5 last:border-b-0 sm:last:border-r-0"
     >
-      <div className="hero-display text-[clamp(2.4rem,5vw,5.5rem)] leading-none text-background italic tabular-nums tracking-tight">
+      <div className="hero-display text-[clamp(2.8rem,6vw,6.5rem)] leading-[0.85] text-background italic tabular-nums tracking-tighter">
         {"prefix" in stat ? stat.prefix : ""}
         {display}
         {stat.suffix}
       </div>
       <div>
-        <div className="font-medium text-[14px] md:text-[15px] text-background/90 mb-1 md:mb-1.5 tracking-wide">
+        <div className="font-mono text-[10px] md:text-[11px] font-bold text-background/80 mb-2 md:mb-3 tracking-[0.2em] uppercase">
           {stat.label}
         </div>
-        <div className="text-[11px] md:text-[12px] text-background/50 leading-relaxed max-w-[180px] md:max-w-[200px]">
+        <div className="text-[12px] md:text-[13px] text-background/40 leading-relaxed max-w-[200px] md:max-w-[220px] font-medium">
           {stat.description}
         </div>
       </div>

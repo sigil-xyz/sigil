@@ -15,7 +15,8 @@ pub struct RecordSpend<'info> {
     )]
     pub sigil: Account<'info, Sigil>,
 
-    // caller must be the principal or a trusted cpi caller
+    /// Any signer may call record_spend — the program enforces all limits.
+    /// Typically the service server, but can also be the agent or principal.
     pub authority: Signer<'info>,
 }
 

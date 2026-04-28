@@ -10,6 +10,43 @@ import { SectionReveal } from "@/components/app/SectionReveal";
 import { MOCK_AGENTS } from "@/data/mock";
 import type { Agent, CapabilityType, PricingModel } from "@/types";
 import { cn } from "@/lib/utils";
+import { useRegistry } from "@/hooks/useRegistry";
+import type { AgentListingAccount, PricingModel as OnChainPricingModel } from "@/lib/sigil/types";
+import BN from "bn.js";
+
+function listingToAgent(l: AgentListingAccount): Agent {
+  const pricingModelMap: Record<OnChainPricingModel["kind"], PricingModel> = {
+    perCall: "per-call",
+    perToken: "per-token",
+    subscription: "subscription",
+  };
+  const m = l.pricingModel;
+  const pricingModel = pricingModelMap[m.kind];
+  const pricingAmount =
+    m.kind === "subscription"
+      ? (m.monthly instanceof BN ? m.monthly.toNumber() : Number(m.monthly)) / 1_000_000
+      : (m.amount instanceof BN ? m.amount.toNumber() : Number(m.amount)) / 1_000_000;
+
+  const totalTx = l.totalTransactions instanceof BN ? l.totalTransactions.toNumber() : Number(l.totalTransactions);
+  const successTx = l.successfulTransactions instanceof BN ? l.successfulTransactions.toNumber() : Number(l.successfulTransactions);
+  const lastActive = l.lastActive instanceof BN ? l.lastActive.toNumber() : Number(l.lastActive);
+
+  return {
+    id: l.pda.toBase58(),
+    name: l.agent.toBase58().slice(0, 8) + "…",
+    description: l.endpointUrl || "On-chain agent",
+    capabilities: l.capabilities.filter(Boolean) as CapabilityType[],
+    pricingModel,
+    pricingAmount,
+    reputation: l.reputationScore / 2000,
+    totalTx,
+    successRate: totalTx > 0 ? (successTx / totalTx) * 100 : 100,
+    avgRating: 0,
+    stakeAmount: 0,
+    lastActive: lastActive > 0 ? new Date(lastActive * 1000).toISOString() : new Date().toISOString(),
+    sigilId: l.sigil.toBase58(),
+  };
+}
 
 const ALL_CAPABILITIES: CapabilityType[] = [
   "image-generation",
@@ -126,12 +163,17 @@ function AgentNode({ agent, index }: { agent: Agent; index: number }) {
 }
 
 export function RegistryView() {
+  const { listings, loading: registryLoading } = useRegistry({ activeOnly: true });
   const [query, setQuery] = useState("");
   const [selectedCaps, setSelectedCaps] = useState<Set<CapabilityType>>(new Set());
   const [selectedPricing, setSelectedPricing] = useState<Set<PricingModel>>(new Set());
   const [minReputation, setMinReputation] = useState(0);
   const [sortKey, setSortKey] = useState<SortKey>("reputation");
   const [filtersOpen, setFiltersOpen] = useState(false);
+
+  const allAgents: Agent[] = listings.length > 0
+    ? listings.map(listingToAgent)
+    : MOCK_AGENTS;
 
   function toggleCap(cap: CapabilityType) {
     setSelectedCaps((prev) => {
@@ -158,7 +200,7 @@ export function RegistryView() {
   }
 
   const filtered = useMemo(() => {
-    const agents = MOCK_AGENTS.filter((a) => {
+    const agents = allAgents.filter((a) => {
       if (query && !a.name.toLowerCase().includes(query.toLowerCase()) &&
           !a.description.toLowerCase().includes(query.toLowerCase())) return false;
       if (selectedCaps.size > 0 && !a.capabilities.some((c) => selectedCaps.has(c))) return false;
@@ -212,7 +254,11 @@ export function RegistryView() {
               </div>
               <div className="font-mono text-[2rem] font-light text-foreground tabular-nums leading-none flex items-center gap-4 lg:justify-end">
                 <Activity size={24} strokeWidth={1.5} className="text-emerald-500 animate-pulse" />
-                1,402
+                {registryLoading ? (
+                  <span className="animate-pulse text-muted-foreground/40">…</span>
+                ) : (
+                  allAgents.length.toLocaleString()
+                )}
               </div>
             </div>
           </div>

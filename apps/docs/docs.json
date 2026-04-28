@@ -1,0 +1,80 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Sigil Protocol",
+  "colors": {
+    "primary": "#1a1a1a",
+    "light": "#737373",
+    "dark": "#1a1a1a"
+  },
+  "favicon": "/logo/favicon.svg",
+  "navigation": {
+    "groups": [
+      {
+        "group": "Overview",
+        "pages": [
+          "introduction"
+        ]
+      },
+      {
+        "group": "Getting Started",
+        "pages": [
+          "getting-started/installation",
+          "getting-started/quickstart"
+        ]
+      },
+      {
+        "group": "Concepts",
+        "pages": [
+          "concepts/sigils",
+          "concepts/registry",
+          "concepts/reputation"
+        ]
+      },
+      {
+        "group": "SDK Reference",
+        "pages": [
+          "sdk/client",
+          "sdk/credentials",
+          "sdk/registry"
+        ]
+      },
+      {
+        "group": "x402 Middleware",
+        "pages": [
+          "x402/overview",
+          "x402/express",
+          "x402/nextjs"
+        ]
+      }
+    ]
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "background": {
+    "color": {
+      "dark": "#0f0f0f"
+    }
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "GitHub",
+        "href": "https://github.com/sigil-xyz/sigil"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Dashboard",
+      "href": "https://dashboard.sigil.xyz"
+    }
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/sigil-xyz/sigil",
+      "twitter": "https://twitter.com/sigilprotocol"
+    }
+  }
+}

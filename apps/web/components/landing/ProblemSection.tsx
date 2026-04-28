@@ -240,15 +240,15 @@ export function ProblemSection() {
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="font-mono text-[10px] md:text-[11px] tracking-[0.3em] text-muted-foreground/50 uppercase block mb-6 md:mb-8"
+              className="font-mono text-[10px] md:text-[11px] tracking-[0.4em] text-muted-foreground/50 uppercase block mb-8 md:mb-10 font-bold"
             >
               The Protocol
             </motion.span>
 
-            <h2 className="hero-display text-[clamp(2.5rem,8vw,9rem)] text-foreground leading-[0.9] tracking-tighter">
+            <h2 className="hero-display text-[clamp(2.5rem,8vw,9rem)] text-foreground leading-[0.88] tracking-tighter">
               <LineReveal delay={0.1}>Critical gaps</LineReveal>
               <br />
-              <LineReveal delay={0.25} className="italic">
+              <LineReveal delay={0.25} className="italic text-foreground/90">
                 in the agent economy.
               </LineReveal>
             </h2>
@@ -257,10 +257,10 @@ export function ProblemSection() {
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               transition={{ delay: 0.8, duration: 1 }}
-              className="mt-12 md:mt-16 flex flex-col items-center gap-4"
+              className="mt-16 md:mt-20 flex flex-col items-center gap-6"
             >
-              <div className="w-[1px] h-12 md:h-16 bg-gradient-to-b from-black/20 to-transparent" />
-              <span className="font-mono text-[9px] tracking-[0.5em] text-muted-foreground/40 uppercase">
+              <div className="w-[1px] h-16 md:h-24 bg-gradient-to-b from-foreground/20 to-transparent" />
+              <span className="font-mono text-[9px] md:text-[10px] tracking-[0.6em] text-muted-foreground/30 uppercase font-bold">
                 Scroll to explore
               </span>
             </motion.div>

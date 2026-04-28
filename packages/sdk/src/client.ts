@@ -1,5 +1,6 @@
 import { AnchorProvider, Program, web3 } from "@coral-xyz/anchor";
 import { Connection, PublicKey, SystemProgram } from "@solana/web3.js";
+import BN from "bn.js";
 
 import credentialIdl from "./idl/credential.json";
 import registryIdl from "./idl/registry.json";
@@ -110,6 +111,18 @@ export class SigilClient {
       .accounts({
         sigil: sigilPda,
         principal: this.provider.wallet.publicKey,
+      })
+      .rpc();
+  }
+
+  async recordSpend(agent: PublicKey, amount: BN): Promise<web3.TransactionSignature> {
+    const [sigilPda] = this.sigilPda(agent);
+
+    return this.cp.methods
+      .recordSpend(amount)
+      .accounts({
+        sigil: sigilPda,
+        authority: this.provider.wallet.publicKey,
       })
       .rpc();
   }
