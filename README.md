@@ -1,6 +1,10 @@
 <div align="center">
   <br />
-  <img src="https://raw.githubusercontent.com/sigil-xyz/sigil/main/.github/assets/logo_animated.svg" width="160" height="192" alt="Sigil Logo" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/sigil-xyz/sigil/main/apps/docs/logo/dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/sigil-xyz/sigil/main/apps/docs/logo/light.svg">
+    <img src="https://raw.githubusercontent.com/sigil-xyz/sigil/main/apps/docs/logo/light.svg" width="165" height="48" alt="Sigil Logo" />
+  </picture>
   <br />
   <h1>SIGIL</h1>
   <p align="center">
