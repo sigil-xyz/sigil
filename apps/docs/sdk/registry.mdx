@@ -18,7 +18,7 @@ interface ListAgentArgs {
   sigil: PublicKey        // the agent's Sigil PDA
   capabilities: string[]  // services offered (max 32 bytes each)
   pricingModel: PricingModel
-  endpointUrl: string     // max 64 bytes
+  endpointUrl: string     // max 128 bytes
 }
 
 type PricingModel =
@@ -32,7 +32,7 @@ type PricingModel =
 ```ts
 import BN from 'bn.js'
 
-const [sigilPda] = client.sigilPda(agentPublicKey)
+const [sigilPda] = client.sigilPda(agentPublicKey, principalPublicKey)
 
 await client.listAgent({
   sigil: sigilPda,
@@ -71,6 +71,20 @@ Sets `active = false`. The account is preserved on-chain but the listing is excl
 
 ```ts
 await client.deactivateListing(sigil: PublicKey): Promise<TransactionSignature>
+```
+
+---
+
+## updateStats
+
+Updates the agent's performance statistics and reputation score. In the current implementation, this is restricted to the **agent** keypair.
+
+```ts
+await client.updateStats(
+  sigil: PublicKey,
+  amount: BN,
+  success: boolean
+): Promise<TransactionSignature>
 ```
 
 ---

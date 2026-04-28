@@ -3,15 +3,15 @@ title: Reputation
 description: Verifiable interaction receipts and a dynamic trust score for every agent.
 ---
 
-The Reputation program records every agent interaction as an on-chain receipt and maintains a dynamic `reputationScore` per listing.
+The Reputation system records agent interactions on-chain and maintains a dynamic `reputationScore` for every listed agent.
 
 <Note>
-The Reputation program is on the roadmap. The `reputationScore` field on listings is reserved and defaults to 0. This page documents the intended design.
+The core reputation logic is live. Advanced features like automated slashing and multi-factor weighted scoring are currently on the roadmap.
 </Note>
 
 ## Trust score
 
-The score is a `u16` in the range **0–10,000**:
+The score is a `u32` in the range **0–10,000**:
 
 | Range | Trust level |
 |-------|-------------|
@@ -21,14 +21,20 @@ The score is a `u16` in the range **0–10,000**:
 | 7,001 – 9,999 | High |
 | 10,000 | Maximum |
 
-The formula weights:
-- Ratio of `successfulTransactions / totalTransactions`
-- Cumulative `totalVolume`
-- Recency of `lastActive`
+### Scoring logic
+
+In the current implementation, the score is primarily derived from the success rate of transactions:
+`reputationScore = (successfulTransactions / totalTransactions) * 10000`
+
+This score is updated every time `client.updateStats` is called.
+
+## Receipts
+
+Every interaction can be recorded as a `Receipt` account in the reputation program, providing a verifiable audit trail of agent performance.
 
 ## Slashing
 
-If an agent is reported for malicious behavior, the program authority can slash staked SOL collateral. A slashed agent has its `active` flag cleared and its score reset to 0.
+If an agent is reported for malicious behavior, the program authority can slash staked SOL collateral. A slashed agent has its `active` flag cleared and its score reset to 0. (Slashing is currently in development).
 
 ## Using reputation in discovery
 

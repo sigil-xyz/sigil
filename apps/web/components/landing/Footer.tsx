@@ -17,7 +17,7 @@ const links = {
     },
     {
       label: "SDK reference",
-      href: "https://sigil-10dddbf2.mintlify.app/introduction",
+      href: "https://sigil-10dddbf2.mintlify.app/sdk/client",
       external: true,
     },
     {

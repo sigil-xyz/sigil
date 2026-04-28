@@ -23,6 +23,7 @@ import {
   encodePricingModel,
   encodeString32,
   encodeString64,
+  encodeString128,
 } from "./utils";
 
 const SIGIL_SEED = Buffer.from("sigil");
@@ -52,9 +53,9 @@ export class SigilClient {
 
   // ─── PDAs ────────────────────────────────────────────────────────────────
 
-  sigilPda(agent: PublicKey): [PublicKey, number] {
+  sigilPda(agent: PublicKey, principal: PublicKey): [PublicKey, number] {
     return PublicKey.findProgramAddressSync(
-      [SIGIL_SEED, agent.toBuffer()],
+      [SIGIL_SEED, principal.toBuffer(), agent.toBuffer()],
       this.cp.programId
     );
   }
@@ -69,7 +70,8 @@ export class SigilClient {
   // ─── Credential instructions ─────────────────────────────────────────────
 
   async issueSigil(args: IssueSigilArgs): Promise<web3.TransactionSignature> {
-    const [sigilPda] = this.sigilPda(args.agent);
+    const principal = this.provider.wallet.publicKey;
+    const [sigilPda] = this.sigilPda(args.agent, principal);
 
     return this.cp.methods
       .issueSigil({
@@ -81,26 +83,28 @@ export class SigilClient {
       })
       .accounts({
         sigil: sigilPda,
-        principal: this.provider.wallet.publicKey,
+        principal,
         systemProgram: SystemProgram.programId,
       })
       .rpc();
   }
 
   async revokeSigil(agent: PublicKey): Promise<web3.TransactionSignature> {
-    const [sigilPda] = this.sigilPda(agent);
+    const principal = this.provider.wallet.publicKey;
+    const [sigilPda] = this.sigilPda(agent, principal);
 
     return this.cp.methods
       .revokeSigil()
       .accounts({
         sigil: sigilPda,
-        principal: this.provider.wallet.publicKey,
+        principal,
       })
       .rpc();
   }
 
   async updateSigil(args: UpdateSigilArgs): Promise<web3.TransactionSignature> {
-    const [sigilPda] = this.sigilPda(args.agent);
+    const principal = this.provider.wallet.publicKey;
+    const [sigilPda] = this.sigilPda(args.agent, principal);
 
     return this.cp.methods
       .updateSigil({
@@ -110,13 +114,14 @@ export class SigilClient {
       })
       .accounts({
         sigil: sigilPda,
-        principal: this.provider.wallet.publicKey,
+        principal,
       })
       .rpc();
   }
 
-  async recordSpend(agent: PublicKey, amount: BN): Promise<web3.TransactionSignature> {
-    const [sigilPda] = this.sigilPda(agent);
+  async recordSpend(agent: PublicKey, amount: BN, principal?: PublicKey): Promise<web3.TransactionSignature> {
+    const p = principal ?? this.provider.wallet.publicKey;
+    const [sigilPda] = this.sigilPda(agent, p);
 
     return this.cp.methods
       .recordSpend(amount)
@@ -129,8 +134,8 @@ export class SigilClient {
 
   // ─── Credential reads ────────────────────────────────────────────────────
 
-  async getSigil(agent: PublicKey): Promise<SigilAccount> {
-    const [pda] = this.sigilPda(agent);
+  async getSigil(agent: PublicKey, principal: PublicKey): Promise<SigilAccount> {
+    const [pda] = this.sigilPda(agent, principal);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const raw = await this.cp.account["sigil"].fetch(pda) as any;
 
@@ -181,11 +186,11 @@ export class SigilClient {
 
   async verifySigil(
     agent: PublicKey,
-    options: VerifySigilOptions = {}
+    options: VerifySigilOptions
   ): Promise<boolean> {
     let sigil: SigilAccount;
     try {
-      sigil = await this.getSigil(agent);
+      sigil = await this.getSigil(agent, options.principal);
     } catch {
       return false;
     }
@@ -217,7 +222,7 @@ export class SigilClient {
         sigil: args.sigil,
         capabilities: args.capabilities.map(encodeString32),
         pricingModel: encodePricingModel(args.pricingModel),
-        endpointUrl: encodeString64(args.endpointUrl),
+        endpointUrl: encodeString128(args.endpointUrl),
       })
       .accounts({
         listing: listingPda,
@@ -234,7 +239,7 @@ export class SigilClient {
       .updateListing({
         capabilities: args.capabilities.map(encodeString32),
         pricingModel: encodePricingModel(args.pricingModel),
-        endpointUrl: encodeString64(args.endpointUrl),
+        endpointUrl: encodeString128(args.endpointUrl),
       })
       .accounts({
         listing: listingPda,
@@ -251,6 +256,25 @@ export class SigilClient {
       .accounts({
         listing: listingPda,
         agent: this.provider.wallet.publicKey,
+      })
+      .rpc();
+  }
+
+  async updateStats(
+    sigil: PublicKey,
+    amount: BN,
+    success: bool
+  ): Promise<web3.TransactionSignature> {
+    const [listingPda] = this.listingPda(sigil);
+
+    return this.rp.methods
+      .updateStats({
+        amount,
+        success,
+      })
+      .accounts({
+        listing: listingPda,
+        authority: this.provider.wallet.publicKey,
       })
       .rpc();
   }
