@@ -1,0 +1,135 @@
+---
+title: Next.js
+description: Protect Next.js App Router route handlers with Sigil credential verification.
+---
+
+## Install
+
+```bash
+npm install @sigil/x402 next
+```
+
+## Import
+
+```ts
+import { withSigilAuth } from '@sigil/x402/next'
+```
+
+`@sigil/x402/next` is a separate subpath — do not import from `@sigil/x402` for Next.js usage.
+
+## Basic usage
+
+Wrap your route handler with `withSigilAuth`:
+
+```ts
+// app/api/generate/route.ts
+import { withSigilAuth } from '@sigil/x402/next'
+import { NextRequest, NextResponse } from 'next/server'
+import { Connection } from '@solana/web3.js'
+import BN from 'bn.js'
+
+const connection = new Connection(process.env.SOLANA_RPC_URL!, 'confirmed')
+
+export const POST = withSigilAuth(
+  async (req) => {
+    const agentPubkey = req.sigilAgent // verified agent pubkey (base58)
+    return NextResponse.json({ result: 'generated', agent: agentPubkey })
+  },
+  {
+    connection,
+    serverWallet,
+    requiredCapability: 'image-generation',
+    spendAmount: new BN(50_000), // 0.05 USDC per request
+  }
+)
+```
+
+## TypeScript: sigilAgent type
+
+The wrapped handler receives a `NextRequest` extended with `sigilAgent?: string`. This is already typed inside `withSigilAuth` — no extra declaration needed.
+
+## Verification only
+
+```ts
+export const GET = withSigilAuth(
+  async (req) => {
+    return NextResponse.json({ agent: req.sigilAgent })
+  },
+  {
+    connection,
+    serverWallet,
+    requiredCapability: 'read',
+    // no spendAmount → verify only, no on-chain spend recorded
+  }
+)
+```
+
+## Sharing config
+
+Define the middleware config once and reuse it across routes:
+
+```ts
+// lib/sigil.ts
+import { SigilMiddlewareConfig } from '@sigil/x402'
+import { Connection } from '@solana/web3.js'
+import BN from 'bn.js'
+
+export const connection = new Connection(process.env.SOLANA_RPC_URL!, 'confirmed')
+
+export const baseConfig: Omit<SigilMiddlewareConfig, 'requiredCapability' | 'spendAmount'> = {
+  connection,
+  serverWallet,
+}
+```
+
+```ts
+// app/api/generate/route.ts
+import { withSigilAuth } from '@sigil/x402/next'
+import { baseConfig } from '@/lib/sigil'
+import BN from 'bn.js'
+
+export const POST = withSigilAuth(handler, {
+  ...baseConfig,
+  requiredCapability: 'image-generation',
+  spendAmount: new BN(50_000),
+})
+```
+
+## Building agent headers
+
+Use `buildSigilHeaders` from `@sigil/x402` in your agent code to construct the signed headers:
+
+```ts
+import { buildSigilHeaders } from '@sigil/x402'
+import { Keypair } from '@solana/web3.js'
+import BN from 'bn.js'
+
+const headers = buildSigilHeaders({
+  agentKeypair: myAgentKeypair,
+  method: 'POST',
+  path: '/api/generate',
+  spendAmount: new BN(50_000),
+})
+
+await fetch('https://api.example.com/api/generate', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', ...headers },
+  body: JSON.stringify({ prompt: 'a red fox' }),
+})
+```
+
+## Error responses
+
+On failure the middleware returns `402 Payment Required`:
+
+```json
+{
+  "protocol": "sigil-v1",
+  "message": "Agent Sigil is invalid or lacks the 'image-generation' capability",
+  "requiredCapability": "image-generation",
+  "spendAmount": "50000",
+  "credentialProgram": "ZFK63KBXDhGCYm5orVo5QiTBaBhWD4PUcUDBG6fjTkH",
+  "network": "devnet",
+  "docs": "https://docs.sigil.xyz/x402"
+}
+```

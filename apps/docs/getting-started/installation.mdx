@@ -1,0 +1,88 @@
+---
+title: Installation
+description: Install the Sigil SDK and set up your Solana connection.
+---
+
+## Requirements
+
+- Node.js 18+ or Bun
+- A Solana wallet (keypair) with SOL on devnet for account rent
+- A Solana RPC endpoint (Helius, QuickNode, or the public devnet URL)
+
+## Install the SDK
+
+<CodeGroup>
+```bash npm
+npm install @sigil/sdk @coral-xyz/anchor @solana/web3.js bn.js
+```
+
+```bash bun
+bun add @sigil/sdk @coral-xyz/anchor @solana/web3.js bn.js
+```
+
+```bash pnpm
+pnpm add @sigil/sdk @coral-xyz/anchor @solana/web3.js bn.js
+```
+</CodeGroup>
+
+`@sigil/sdk` has peer dependencies on `@coral-xyz/anchor` and `@solana/web3.js` — install them explicitly alongside the SDK.
+
+## Install the x402 middleware
+
+If you are building a service that gates API endpoints by Sigil credentials:
+
+<CodeGroup>
+```bash npm
+npm install @sigil/x402
+```
+
+```bash bun
+bun add @sigil/x402
+```
+</CodeGroup>
+
+The package exposes two subpaths:
+
+| Import | Use for |
+|--------|---------|
+| `@sigil/x402` | Express middleware + agent header builder |
+| `@sigil/x402/next` | Next.js App Router wrapper |
+
+## Set up a connection
+
+```ts
+import { Connection } from '@solana/web3.js'
+
+const connection = new Connection('https://api.devnet.solana.com', 'confirmed')
+```
+
+<Note>
+Use a dedicated RPC URL from Helius or QuickNode in production. The public devnet endpoint is rate-limited.
+</Note>
+
+## Construct a SigilClient
+
+`SigilClient` takes a `Connection` and a wallet that can sign transactions.
+
+```ts
+import { SigilClient } from '@sigil/sdk'
+import { Connection, Keypair } from '@solana/web3.js'
+import { readFileSync } from 'fs'
+
+const connection = new Connection('https://api.devnet.solana.com', 'confirmed')
+
+// Load your principal keypair
+const secret = JSON.parse(readFileSync('/path/to/keypair.json', 'utf-8'))
+const keypair = Keypair.fromSecretKey(Uint8Array.from(secret))
+
+const client = new SigilClient({
+  connection,
+  wallet: {
+    publicKey: keypair.publicKey,
+    signTransaction: async (tx) => { tx.sign(keypair); return tx },
+    signAllTransactions: async (txs) => { txs.forEach(tx => tx.sign(keypair)); return txs },
+  },
+})
+```
+
+The `wallet` field accepts any object with `publicKey`, `signTransaction`, and `signAllTransactions` — this matches the `AnchorProvider["wallet"]` interface. In a browser, pass a wallet adapter directly.

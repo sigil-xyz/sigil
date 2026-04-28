@@ -8,7 +8,7 @@ import {
   useReducedMotion,
 } from "framer-motion";
 import { buttonVariants } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, FileText } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { CopyButton } from "@/components/landing/CopyButton";
@@ -43,6 +43,17 @@ export function HeroSection() {
         {/* Sophisticated Mesh Gradients */}
         <div className="absolute top-[-10%] left-[-5%] w-[60%] h-[60%] bg-emerald-500/[0.04] blur-[140px] rounded-full animate-pulse" />
         <div className="absolute bottom-[-15%] right-[-5%] w-[60%] h-[60%] bg-blue-600/[0.04] blur-[140px] rounded-full animate-pulse [animation-delay:2s]" />
+
+        {/* Sigil Orb - Floating visual element */}
+        <motion.div 
+          animate={{ 
+            y: [0, -20, 0],
+            opacity: [0.03, 0.05, 0.03],
+            scale: [1, 1.05, 1]
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%] w-[800px] h-[800px] bg-foreground/[0.03] blur-[120px] rounded-full"
+        />
       </div>
 
       {/* Text content */}
@@ -64,14 +75,14 @@ export function HeroSection() {
         </motion.div>
 
         {/* Headline */}
-        <h1 className="hero-display text-[clamp(2.8rem,7vw,7.5rem)] text-foreground mb-8 md:mb-10 max-w-6xl leading-[0.92]">
+        <h1 className="hero-display text-[clamp(2.8rem,7vw,7.5rem)] text-foreground mb-8 md:mb-10 max-w-6xl leading-[0.92] tracking-tighter">
           <LineReveal delay={0.22} className="block">
             Cryptographic
           </LineReveal>
           <LineReveal delay={0.36} className="block">
             identity for the
           </LineReveal>
-          <LineReveal delay={0.5} className="block italic">
+          <LineReveal delay={0.5} className="block italic text-foreground/90">
             agent economy.
           </LineReveal>
         </h1>
@@ -81,7 +92,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.85, ease: [0.16, 1, 0.3, 1] }}
-          className="text-[1rem] md:text-[1.15rem] text-foreground/70 leading-relaxed max-w-[580px] mb-8 md:mb-12 font-medium px-4"
+          className="text-[1.1rem] md:text-[1.25rem] text-foreground/60 leading-relaxed max-w-[620px] mb-8 md:mb-12 font-medium px-4"
         >
           AI agents can now transact autonomously. But without identity,
           authorization, and accountability — anyone claiming to be &ldquo;your agent&rdquo;
@@ -93,9 +104,9 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-10 md:mb-12"
+          className="mb-12 md:mb-16"
         >
-          <div className="inline-flex items-center gap-3 font-mono text-[12px] md:text-[13px] bg-secondary/40 border border-border/50 rounded-full px-6 py-3">
+          <div className="inline-flex items-center gap-3 font-mono text-[12px] md:text-[13px] bg-secondary/40 border border-border/50 rounded-full px-6 py-3 hover:bg-secondary/60 transition-colors cursor-default">
             <span className="text-muted-foreground/50 select-none">$</span>
             <span className="text-foreground/80">bun add @sigil/sdk</span>
             <CopyButton text="bun add @sigil/sdk" />
@@ -107,29 +118,41 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 1.05, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-wrap items-center justify-center gap-4 md:gap-5 mb-16 md:mb-24"
+          className="flex flex-col items-center gap-6 mb-16 md:mb-24"
         >
+          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-5">
+            <Link
+              href="/dashboard"
+              className={cn(
+                buttonVariants({ size: "lg" }),
+                "rounded-full px-8 md:px-12 h-14 md:h-16 text-[14px] md:text-[15px] font-semibold gap-2 group shadow-xl shadow-foreground/5 hover:shadow-foreground/10 transition-all bg-foreground text-background w-full sm:w-auto"
+              )}
+            >
+              Get started
+              <ArrowRight
+                size={18}
+                className="transition-transform group-hover:translate-x-0.5"
+              />
+            </Link>
+            <Link
+              href="/registry"
+              className={cn(
+                buttonVariants({ variant: "outline", size: "lg" }),
+                "rounded-full px-8 md:px-12 h-14 md:h-16 text-[14px] md:text-[15px] font-semibold bg-foreground/5 backdrop-blur-sm hover:bg-foreground/10 transition-colors border-border text-foreground w-full sm:w-auto"
+              )}
+            >
+              Browse agents
+            </Link>
+          </div>
+
           <Link
-            href="/dashboard"
-            className={cn(
-              buttonVariants({ size: "lg" }),
-              "rounded-full px-8 md:px-12 h-14 md:h-16 text-[14px] md:text-[15px] font-medium gap-2 group shadow-xl shadow-foreground/5 hover:shadow-foreground/10 transition-all bg-foreground text-background w-full sm:w-auto"
-            )}
+            href="https://docs.sigil.xyz"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-2 font-mono text-[11px] tracking-[0.2em] text-muted-foreground hover:text-foreground uppercase font-bold transition-colors mt-2"
           >
-            Get started
-            <ArrowRight
-              size={18}
-              className="transition-transform group-hover:translate-x-0.5"
-            />
-          </Link>
-          <Link
-            href="/registry"
-            className={cn(
-              buttonVariants({ variant: "outline", size: "lg" }),
-              "rounded-full px-8 md:px-12 h-14 md:h-16 text-[14px] md:text-[15px] font-medium bg-foreground/5 backdrop-blur-sm hover:bg-foreground/10 transition-colors border-border text-foreground w-full sm:w-auto"
-            )}
-          >
-            Browse agents
+            Read the documentation
+            <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
           </Link>
         </motion.div>
 
@@ -140,18 +163,19 @@ export function HeroSection() {
           transition={{ duration: 1, delay: 1.2 }}
           className="w-full max-w-5xl mx-auto relative z-20 mt-auto"
         >
-          <div className="grid grid-cols-1 sm:grid-cols-3 items-center gap-y-8 px-6 py-8 md:px-10 md:py-8 bg-background/50 backdrop-blur-md rounded-[1.5rem] md:rounded-[2rem] border border-border/40 shadow-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-3 items-center gap-y-8 px-6 py-8 md:px-10 md:py-10 bg-background/50 backdrop-blur-md rounded-[1.5rem] md:rounded-[2.5rem] border border-border/40 shadow-sm relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-tr from-foreground/[0.01] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             {[
               { value: "847", label: "Active agents" },
               { value: "12.4k", label: "Verified txns" },
               { value: "$2.3M", label: "Protected daily" },
             ].map((stat, i) => (
               <div key={i} className="flex flex-col items-center relative">
-                {i > 0 && <div className="hidden sm:block absolute left-[-2px] top-1/2 -translate-y-1/2 w-[1px] h-8 bg-border/40" />}
-                <div className="font-mono text-[1.25rem] md:text-[1.5rem] font-medium text-foreground tabular-nums tracking-tight">
+                {i > 0 && <div className="hidden sm:block absolute left-[-2px] top-1/2 -translate-y-1/2 w-[1px] h-10 bg-border/40" />}
+                <div className="font-mono text-[1.5rem] md:text-[1.75rem] font-medium text-foreground tabular-nums tracking-tighter">
                   {stat.value}
                 </div>
-                <div className="text-[9px] md:text-[10px] font-mono tracking-[0.2em] text-foreground/50 font-bold uppercase mt-1 md:mt-2">
+                <div className="text-[10px] md:text-[11px] font-mono tracking-[0.2em] text-foreground/40 font-bold uppercase mt-1 md:mt-2">
                   {stat.label}
                 </div>
               </div>

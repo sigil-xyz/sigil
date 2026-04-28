@@ -1,0 +1,84 @@
+---
+title: Overview
+description: HTTP middleware for gating API endpoints with Sigil credentials.
+---
+
+`@sigil/x402` implements a request authentication flow on top of HTTP 402 Payment Required. It lets any server verify that an incoming request comes from a credentialed, in-budget agent — without a separate auth service.
+
+## How it works
+
+<Steps>
+  <Step title="Agent builds signed headers">
+    The agent calls `buildSigilHeaders` with its keypair, the request method, path, and spend amount. This produces three HTTP headers containing the agent's public key, a timestamp, and an ed25519 signature.
+  </Step>
+  <Step title="Server receives request">
+    The middleware extracts the three `x-sigil-*` headers and validates them.
+  </Step>
+  <Step title="Signature verification">
+    The middleware reconstructs the signed message `{timestamp}:{METHOD}:{path}:{spendAmount}` and verifies the ed25519 signature against the agent's public key.
+  </Step>
+  <Step title="Timestamp check">
+    Rejects the request if the timestamp is older than `maxRequestAgeMs` (default 60 seconds). Prevents replay attacks.
+  </Step>
+  <Step title="On-chain Sigil check">
+    Calls `client.verifySigil(agentPubkey, { requiredCapability, maxSpendAmount })`. Returns 402 if the Sigil is missing, revoked, expired, or lacking the required capability.
+  </Step>
+  <Step title="Record spend">
+    If `spendAmount > 0`, calls `client.recordSpend(agentPubkey, amount)` on-chain. This debits the agent's daily limit and rejects the request if the limit would be exceeded.
+  </Step>
+  <Step title="Request forwarded">
+    On success, the verified agent public key is attached to the request object (`req.sigilAgent`) and the next handler is called.
+  </Step>
+</Steps>
+
+## Required headers
+
+Agents must attach these three headers to every request:
+
+| Header | Value |
+|--------|-------|
+| `x-sigil-agent` | Base58 agent public key |
+| `x-sigil-timestamp` | Unix timestamp in milliseconds |
+| `x-sigil-signature` | Base58 ed25519 signature |
+
+### Signature payload
+
+```
+{timestamp}:{METHOD}:{path}:{spendAmount}
+```
+
+Example: `1714300000000:POST:/api/generate:50000`
+
+The message is UTF-8 encoded and signed with the agent's ed25519 secret key using `nacl.sign.detached`.
+
+## 402 response body
+
+When authorization fails, the middleware returns HTTP `402` with:
+
+```json
+{
+  "protocol": "sigil-v1",
+  "message": "reason for rejection",
+  "requiredCapability": "image-generation",
+  "spendAmount": "50000",
+  "credentialProgram": "ZFK63KBXDhGCYm5orVo5QiTBaBhWD4PUcUDBG6fjTkH",
+  "network": "devnet",
+  "docs": "https://docs.sigil.xyz/x402"
+}
+```
+
+## SigilMiddlewareConfig
+
+All adapters (Express and Next.js) share the same config interface:
+
+```ts
+interface SigilMiddlewareConfig {
+  connection: Connection              // Solana RPC connection
+  serverWallet: AnchorProvider['wallet'] // signs record_spend transactions
+  requiredCapability?: string         // capability the agent must have
+  spendAmount?: BN                    // micro-USDC to debit per request (0 = verify only)
+  maxRequestAgeMs?: number            // max timestamp age, default 60_000
+}
+```
+
+Setting `spendAmount` to zero (or omitting it) runs verification only — the Sigil is checked but no spend is recorded.

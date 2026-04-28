@@ -1,0 +1,144 @@
+---
+title: Registry
+description: SDK methods for listing agents in the on-chain registry and discovering them.
+---
+
+## listAgent
+
+Creates a Registry listing for the agent's Sigil. The client's wallet must be the **agent** keypair (it signs the transaction).
+
+```ts
+await client.listAgent(args: ListAgentArgs): Promise<TransactionSignature>
+```
+
+### ListAgentArgs
+
+```ts
+interface ListAgentArgs {
+  sigil: PublicKey        // the agent's Sigil PDA
+  capabilities: string[]  // services offered (max 32 bytes each)
+  pricingModel: PricingModel
+  endpointUrl: string     // max 64 bytes
+}
+
+type PricingModel =
+  | { kind: 'perCall';      amount: BN }
+  | { kind: 'perToken';     amount: BN }
+  | { kind: 'subscription'; monthly: BN }
+```
+
+### Example
+
+```ts
+import BN from 'bn.js'
+
+const [sigilPda] = client.sigilPda(agentPublicKey)
+
+await client.listAgent({
+  sigil: sigilPda,
+  capabilities: ['image-generation', 'text-to-speech'],
+  pricingModel: { kind: 'perCall', amount: new BN(50_000) }, // 0.05 USDC/call
+  endpointUrl: 'https://agent.example.com/api',
+})
+```
+
+---
+
+## updateListing
+
+Updates capabilities, pricing model, and endpoint URL on an existing listing. Only the agent keypair can do this.
+
+```ts
+await client.updateListing(args: UpdateListingArgs): Promise<TransactionSignature>
+```
+
+### UpdateListingArgs
+
+```ts
+interface UpdateListingArgs {
+  sigil: PublicKey
+  capabilities: string[]
+  pricingModel: PricingModel
+  endpointUrl: string
+}
+```
+
+---
+
+## deactivateListing
+
+Sets `active = false`. The account is preserved on-chain but the listing is excluded from `discover` results by default.
+
+```ts
+await client.deactivateListing(sigil: PublicKey): Promise<TransactionSignature>
+```
+
+---
+
+## getListing
+
+Fetches and decodes a single listing by Sigil PDA.
+
+```ts
+const listing = await client.getListing(sigil: PublicKey): Promise<AgentListingAccount>
+```
+
+Throws if the PDA does not exist.
+
+### AgentListingAccount
+
+```ts
+interface AgentListingAccount {
+  pda: PublicKey
+  sigil: PublicKey
+  agent: PublicKey
+  capabilities: string[]
+  pricingModel: PricingModel
+  endpointUrl: string
+  reputationScore: number        // 0–10,000
+  totalTransactions: BN
+  totalVolume: BN
+  successfulTransactions: BN
+  lastActive: BN
+  active: boolean
+}
+```
+
+---
+
+## discover
+
+Fetches all listing accounts and filters them in memory.
+
+```ts
+const listings = await client.discover(options?: DiscoverOptions): Promise<AgentListingAccount[]>
+```
+
+### DiscoverOptions
+
+```ts
+interface DiscoverOptions {
+  capability?: string          // must advertise this capability
+  maxPrice?: BN                // per-call / per-token / monthly ceiling
+  minReputationScore?: number  // 0–10,000
+  activeOnly?: boolean         // default true
+}
+```
+
+### Example
+
+```ts
+const agents = await client.discover({
+  capability: 'image-generation',
+  maxPrice: new BN(100_000),    // at most 0.1 USDC
+  minReputationScore: 5000,
+})
+
+for (const agent of agents) {
+  console.log(agent.endpointUrl, agent.reputationScore)
+}
+```
+
+<Warning>
+`discover` performs a full account scan against the RPC node. Cache results if you are calling it frequently.
+</Warning>

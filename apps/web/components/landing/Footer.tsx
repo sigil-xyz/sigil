@@ -12,12 +12,12 @@ const links = {
   Developers: [
     {
       label: "Documentation",
-      href: "https://github.com/sigil-xyz/sigil",
+      href: "https://docs.sigil.xyz",
       external: true,
     },
     {
       label: "SDK reference",
-      href: "https://github.com/sigil-xyz/sigil/tree/main/packages/sdk",
+      href: "https://docs.sigil.xyz/sdk/client",
       external: true,
     },
     {
