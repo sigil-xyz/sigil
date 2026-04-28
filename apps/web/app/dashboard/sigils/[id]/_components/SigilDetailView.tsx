@@ -267,6 +267,7 @@ export function SigilDetailView({ sigil }: SigilDetailViewProps) {
         {revokeOpen && (
           <RevokeDialog
             agentName={sigil.agentName}
+            agentPubkey={sigil.agentPubkey}
             onClose={() => setRevokeOpen(false)}
             onConfirm={() => {
               setRevokeOpen(false);

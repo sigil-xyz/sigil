@@ -107,7 +107,14 @@ export function DashboardView() {
     : connected && !loading ? [] : MOCK_SIGILS;
 
   const principal = connected && publicKey
-    ? { ...MOCK_PRINCIPAL, walletAddress: publicKey.toBase58() }
+    ? {
+        ...MOCK_PRINCIPAL,
+        walletAddress: publicKey.toBase58(),
+        totalIssued: sigils.length,
+        activeCount: sigils.filter((s) => s.status === "active").length,
+        revokedCount: sigils.filter((s) => s.status === "revoked").length,
+        expiredCount: sigils.filter((s) => s.status === "expired").length,
+      }
     : MOCK_PRINCIPAL;
 
   return (
