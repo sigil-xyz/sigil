@@ -13,12 +13,16 @@ export interface SigilMiddlewareConfig {
   spendAmount?: BN;
   /** How old a request timestamp can be before it's rejected. Default: 60 000 ms */
   maxRequestAgeMs?: number;
+  /** Network label returned in 402 responses. Defaults to "devnet". Set to "mainnet-beta" in production. */
+  network?: "devnet" | "mainnet-beta" | "testnet";
 }
 
 /** Headers the agent must include in every request */
 export interface SigilPaymentHeaders {
   /** Base58 agent public key */
   "x-sigil-agent": string;
+  /** Base58 principal public key that issued the agent's Sigil */
+  "x-sigil-principal": string;
   /** Unix timestamp in milliseconds */
   "x-sigil-timestamp": string;
   /**

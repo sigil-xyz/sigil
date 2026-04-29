@@ -33,7 +33,7 @@ const links = {
   ],
   Company: [
     { label: "About", href: "#protocol" },
-    { label: "Blog", href: "#" },
+    { label: "Blog", href: "https://github.com/sigil-xyz/sigil/discussions", external: true },
     { label: "Twitter", href: "https://twitter.com/sigilxyz", external: true },
     { label: "Contact", href: "mailto:hello@sigil.xyz" },
   ],
@@ -131,13 +131,13 @@ export function Footer() {
               </svg>
             </Link>
             <Link
-              href="#"
+              href="mailto:legal@sigil.xyz"
               className="text-[13px] text-muted-foreground/60 hover:text-foreground transition-colors"
             >
               Privacy
             </Link>
             <Link
-              href="#"
+              href="mailto:legal@sigil.xyz"
               className="text-[13px] text-muted-foreground/60 hover:text-foreground transition-colors"
             >
               Terms

@@ -10,6 +10,8 @@ import "@solana/wallet-adapter-react-ui/styles.css";
 const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL ?? "https://api.devnet.solana.com";
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
+  // PhantomWalletAdapter covers legacy Phantom; Wallet Standard protocol
+  // auto-discovers all other compliant wallets (Backpack, Solflare, etc.)
   const wallets = useMemo(() => [new PhantomWalletAdapter()], []);
 
   return (

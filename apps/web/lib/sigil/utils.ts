@@ -17,6 +17,13 @@ export function encodeString64(s: string): number[] {
   return Array.from(buf);
 }
 
+export function encodeString128(s: string): number[] {
+  const buf = new Uint8Array(128);
+  const encoded = ENCODER.encode(s);
+  buf.set(encoded.slice(0, 128));
+  return Array.from(buf);
+}
+
 export function decodeString(bytes: number[] | Uint8Array): string {
   const arr = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
   const end = arr.indexOf(0);

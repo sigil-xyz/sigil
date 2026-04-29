@@ -21,7 +21,7 @@ import {
   encodeCapabilities,
   encodePricingModel,
   encodeString32,
-  encodeString64,
+  encodeString128,
 } from "./utils";
 
 const SIGIL_SEED = Buffer.from("sigil");
@@ -205,7 +205,7 @@ export class SigilClient {
         sigil: args.sigil,
         capabilities: args.capabilities.map(encodeString32),
         pricingModel: encodePricingModel(args.pricingModel),
-        endpointUrl: encodeString64(args.endpointUrl),
+        endpointUrl: encodeString128(args.endpointUrl),
       })
       .accounts({
         listing: listingPda,
@@ -222,7 +222,7 @@ export class SigilClient {
       .updateListing({
         capabilities: args.capabilities.map(encodeString32),
         pricingModel: encodePricingModel(args.pricingModel),
-        endpointUrl: encodeString64(args.endpointUrl),
+        endpointUrl: encodeString128(args.endpointUrl),
       })
       .accounts({
         listing: listingPda,

@@ -8,4 +8,6 @@ pub enum RegistryError {
     TooManyCapabilities,
     #[msg("Listing is already inactive")]
     AlreadyInactive,
+    #[msg("Arithmetic overflow")]
+    ArithmeticOverflow,
 }

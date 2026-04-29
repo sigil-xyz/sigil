@@ -34,11 +34,11 @@ pub fn handler(ctx: Context<UpdateStats>, params: UpdateStatsParams) -> Result<(
         RegistryError::Unauthorized
     );
 
-    listing.total_transactions = listing.total_transactions.checked_add(1).unwrap();
-    listing.total_volume = listing.total_volume.checked_add(params.amount).unwrap();
-    
+    listing.total_transactions = listing.total_transactions.checked_add(1).ok_or(RegistryError::ArithmeticOverflow)?;
+    listing.total_volume = listing.total_volume.checked_add(params.amount).ok_or(RegistryError::ArithmeticOverflow)?;
+
     if params.success {
-        listing.successful_transactions = listing.successful_transactions.checked_add(1).unwrap();
+        listing.successful_transactions = listing.successful_transactions.checked_add(1).ok_or(RegistryError::ArithmeticOverflow)?;
     }
     
     listing.last_active = clock.unix_timestamp;

@@ -2,6 +2,7 @@
   "name": "@sigil/x402",
   "version": "0.1.0",
   "description": "x402 HTTP middleware for gating API endpoints with Sigil credentials",
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
@@ -20,7 +21,7 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
-    "@coral-xyz/anchor": "^0.32.0",
+    "@coral-xyz/anchor": "^0.31.0",
     "@sigil/sdk": "file:../sdk",
     "@solana/web3.js": "^1.98.0",
     "bn.js": "^5.2.1",

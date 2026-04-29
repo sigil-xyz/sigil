@@ -11,7 +11,7 @@ function paymentRequiredBody(config: SigilMiddlewareConfig, reason: string): Pay
     requiredCapability: config.requiredCapability,
     spendAmount: config.spendAmount?.toString(),
     credentialProgram: CREDENTIAL_PROGRAM_ID,
-    network: "devnet",
+    network: config.network ?? "devnet",
     docs: "https://docs.sigil.xyz/x402",
   };
 }

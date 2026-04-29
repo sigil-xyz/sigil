@@ -37,7 +37,7 @@ pub fn handler(ctx: Context<RecordSpend>, amount: u64) -> Result<()> {
         sigil.last_reset = clock.unix_timestamp;
     }
 
-    let new_spent = sigil.spent_today.checked_add(amount).unwrap();
+    let new_spent = sigil.spent_today.checked_add(amount).ok_or(SigilError::ArithmeticOverflow)?;
     require!(
         new_spent <= sigil.spend_limit_per_day,
         SigilError::ExceedsDailyLimit

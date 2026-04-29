@@ -16,4 +16,6 @@ pub enum SigilError {
     TooManyDomains,
     #[msg("Only the principal can perform this action")]
     Unauthorized,
+    #[msg("Arithmetic overflow")]
+    ArithmeticOverflow,
 }

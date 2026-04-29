@@ -30,9 +30,12 @@ fn send(svm: &mut LiteSVM, payer: &Keypair, ix: Instruction) {
     svm.send_transaction(tx).expect("transaction failed");
 }
 
-fn sigil_pda(agent: &anchor_lang::prelude::Pubkey) -> (anchor_lang::prelude::Pubkey, u8) {
+fn sigil_pda(
+    principal: &anchor_lang::prelude::Pubkey,
+    agent: &anchor_lang::prelude::Pubkey,
+) -> (anchor_lang::prelude::Pubkey, u8) {
     anchor_lang::prelude::Pubkey::find_program_address(
-        &[b"sigil", agent.as_ref()],
+        &[b"sigil", principal.as_ref(), agent.as_ref()],
         &credential::id(),
     )
 }
@@ -41,7 +44,7 @@ fn sigil_pda(agent: &anchor_lang::prelude::Pubkey) -> (anchor_lang::prelude::Pub
 fn test_issue_sigil() {
     let (mut svm, principal) = load_svm();
     let agent = Keypair::new();
-    let (sigil_pda, _) = sigil_pda(&agent.pubkey());
+    let (sigil_pda, _) = sigil_pda(&principal.pubkey(), &agent.pubkey());
 
     let params = IssueSigilParams {
         agent_pubkey: agent.pubkey(),
@@ -69,7 +72,7 @@ fn test_issue_sigil() {
 fn test_revoke_sigil() {
     let (mut svm, principal) = load_svm();
     let agent = Keypair::new();
-    let (sigil_pda, _) = sigil_pda(&agent.pubkey());
+    let (sigil_pda, _) = sigil_pda(&principal.pubkey(), &agent.pubkey());
 
     // issue first
     let params = IssueSigilParams {

@@ -34,7 +34,7 @@ function listingToAgent(l: AgentListingAccount): Agent {
   return {
     id: l.pda.toBase58(),
     name: l.agent.toBase58().slice(0, 8) + "…",
-    description: l.endpointUrl || "On-chain agent",
+    description: "On-chain agent",
     capabilities: l.capabilities.filter(Boolean) as CapabilityType[],
     pricingModel,
     pricingAmount,
@@ -173,7 +173,7 @@ export function RegistryView() {
 
   const allAgents: Agent[] = listings.length > 0
     ? listings.map(listingToAgent)
-    : MOCK_AGENTS;
+    : registryLoading ? [] : MOCK_AGENTS;
 
   function toggleCap(cap: CapabilityType) {
     setSelectedCaps((prev) => {

@@ -1,10 +1,12 @@
-import { Keypair } from "@solana/web3.js";
+import { Keypair, PublicKey } from "@solana/web3.js";
 import nacl from "tweetnacl";
 import bs58 from "bs58";
 import BN from "bn.js";
 
 interface BuildHeadersArgs {
   agentKeypair: Keypair;
+  /** The principal (owner) public key that issued the agent's Sigil. */
+  principalPubkey: PublicKey;
   method: string;
   path: string;
   spendAmount?: BN;
@@ -15,7 +17,7 @@ interface BuildHeadersArgs {
  * Call this in the agent's HTTP client before sending a request.
  */
 export function buildSigilHeaders(args: BuildHeadersArgs): Record<string, string> {
-  const { agentKeypair, method, path, spendAmount = new BN(0) } = args;
+  const { agentKeypair, principalPubkey, method, path, spendAmount = new BN(0) } = args;
   const timestamp = Date.now().toString();
   const message = new TextEncoder().encode(
     `${timestamp}:${method.toUpperCase()}:${path}:${spendAmount.toString()}`
@@ -24,6 +26,7 @@ export function buildSigilHeaders(args: BuildHeadersArgs): Record<string, string
 
   return {
     "x-sigil-agent": agentKeypair.publicKey.toBase58(),
+    "x-sigil-principal": principalPubkey.toBase58(),
     "x-sigil-timestamp": timestamp,
     "x-sigil-signature": bs58.encode(signature),
   };

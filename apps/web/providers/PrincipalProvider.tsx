@@ -1,8 +1,21 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import { MOCK_PRINCIPAL } from "@/data/mock";
 import { Principal } from "@/types";
+
+const EMPTY_PRINCIPAL: Principal = {
+  walletAddress: "",
+  name: "",
+  email: "",
+  company: "",
+  bio: "",
+  avatarUrl: "",
+  totalIssued: 0,
+  activeCount: 0,
+  revokedCount: 0,
+  expiredCount: 0,
+  totalSpend: 0,
+};
 
 interface PrincipalContextType {
   principal: Principal;
@@ -12,7 +25,7 @@ interface PrincipalContextType {
 const PrincipalContext = createContext<PrincipalContextType | undefined>(undefined);
 
 export function PrincipalProvider({ children }: { children: ReactNode }) {
-  const [principal, setPrincipal] = useState<Principal>(MOCK_PRINCIPAL);
+  const [principal, setPrincipal] = useState<Principal>(EMPTY_PRINCIPAL);
 
   const updatePrincipal = (updates: Partial<Principal>) => {
     setPrincipal((prev) => ({ ...prev, ...updates }));
