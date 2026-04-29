@@ -1,3 +1,4 @@
+import BN from "bn.js";
 import { Capability, PricingModel } from "./types";
 
 const ENCODER = new TextEncoder();
@@ -60,12 +61,15 @@ export function encodePricingModel(model: PricingModel) {
 export function decodePricingModel(raw: Record<string, unknown>): PricingModel {
   if ("perCall" in raw) {
     const v = raw.perCall as { amount: unknown };
-    return { kind: "perCall", amount: v.amount as never };
+    return { kind: "perCall", amount: v.amount as BN };
   }
   if ("perToken" in raw) {
     const v = raw.perToken as { amount: unknown };
-    return { kind: "perToken", amount: v.amount as never };
+    return { kind: "perToken", amount: v.amount as BN };
   }
-  const v = (raw as { subscription: { monthly: unknown } }).subscription;
-  return { kind: "subscription", monthly: v.monthly as never };
+  if ("subscription" in raw) {
+    const v = raw.subscription as { monthly: unknown };
+    return { kind: "subscription", monthly: v.monthly as BN };
+  }
+  throw new Error(`Unknown pricing model variant: ${JSON.stringify(raw)}`);
 }

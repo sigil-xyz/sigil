@@ -8,7 +8,7 @@ interface SpendBarProps {
 }
 
 export function SpendBar({ spent, limit }: SpendBarProps) {
-  const pct = Math.min(100, (spent / limit) * 100);
+  const pct = limit > 0 ? Math.min(100, (spent / limit) * 100) : 0;
   const danger = pct >= 90;
   const warn = pct >= 70;
 

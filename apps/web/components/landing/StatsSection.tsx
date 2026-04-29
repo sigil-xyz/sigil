@@ -128,7 +128,7 @@ export function StatsSection() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="font-mono text-[11px] md:text-[12px] text-background/30 max-w-[240px] md:text-right"
             >
-              Real-time protocol metrics from the Sigil registry.
+              Target metrics for the Sigil protocol at scale.
             </motion.p>
           </div>
         </div>

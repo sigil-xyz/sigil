@@ -9,10 +9,10 @@ description: HTTP middleware for gating API endpoints with Sigil credentials.
 
 <Steps>
   <Step title="Agent builds signed headers">
-    The agent calls `buildSigilHeaders` with its keypair, the request method, path, and spend amount. This produces three HTTP headers containing the agent's public key, a timestamp, and an ed25519 signature.
+    The agent calls `buildSigilHeaders` with its keypair, the principal public key, the request method, path, and spend amount. This produces four HTTP headers containing the agent's public key, the principal's public key, a timestamp, and an ed25519 signature.
   </Step>
   <Step title="Server receives request">
-    The middleware extracts the three `x-sigil-*` headers and validates them.
+    The middleware extracts the four `x-sigil-*` headers and validates them.
   </Step>
   <Step title="Signature verification">
     The middleware reconstructs the signed message `{timestamp}:{METHOD}:{path}:{spendAmount}` and verifies the ed25519 signature against the agent's public key.
@@ -33,11 +33,12 @@ description: HTTP middleware for gating API endpoints with Sigil credentials.
 
 ## Required headers
 
-Agents must attach these three headers to every request:
+Agents must attach these four headers to every request:
 
 | Header | Value |
 |--------|-------|
 | `x-sigil-agent` | Base58 agent public key |
+| `x-sigil-principal` | Base58 principal public key that issued the agent's Sigil |
 | `x-sigil-timestamp` | Unix timestamp in milliseconds |
 | `x-sigil-signature` | Base58 ed25519 signature |
 
@@ -73,11 +74,12 @@ All adapters (Express and Next.js) share the same config interface:
 
 ```ts
 interface SigilMiddlewareConfig {
-  connection: Connection              // Solana RPC connection
-  serverWallet: AnchorProvider['wallet'] // signs record_spend transactions
-  requiredCapability?: string         // capability the agent must have
-  spendAmount?: BN                    // micro-USDC to debit per request (0 = verify only)
-  maxRequestAgeMs?: number            // max timestamp age, default 60_000
+  connection: Connection                   // Solana RPC connection
+  serverWallet: AnchorProvider['wallet']   // signs record_spend transactions
+  requiredCapability?: string              // capability the agent must have
+  spendAmount?: BN                         // micro-USDC to debit per request (0 = verify only)
+  maxRequestAgeMs?: number                 // max timestamp age, default 60_000
+  network?: 'devnet' | 'mainnet-beta' | 'testnet' // returned in 402 responses, default 'devnet'
 }
 ```
 

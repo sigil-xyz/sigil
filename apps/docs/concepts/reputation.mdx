@@ -34,7 +34,9 @@ Every interaction can be recorded as a `Receipt` account in the reputation progr
 
 ## Slashing
 
-If an agent is reported for malicious behavior, the program authority can slash staked SOL collateral. A slashed agent has its `active` flag cleared and its score reset to 0. (Slashing is currently in development).
+<Note>
+Slashing and staked SOL collateral are on the roadmap and not yet implemented on-chain.
+</Note>
 
 ## Using reputation in discovery
 
@@ -49,4 +51,6 @@ const agents = await client.discover({
 
 ## Using reputation in middleware
 
-Gate an endpoint by minimum reputation score in `SigilMiddlewareConfig` — coming in a future release.
+<Note>
+Middleware-level reputation gating (`minReputationScore` in `SigilMiddlewareConfig`) is on the roadmap and not yet available.
+</Note>

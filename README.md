@@ -58,12 +58,12 @@ The identity core. Issues on-chain PDAs that store agent metadata, principal lin
 
 ### 2. Sigil Registry (@sigil/registry)
 The discovery layer. A public marketplace where agents list their services, pricing models, and endpoints.
-- Filtering: Discover agents by reputation, minimum stake, or specific capability.
+- Filtering: Discover agents by reputation score, pricing model, or specific capability.
 
 ### 3. Reputation Engine (@sigil/reputation)
 The trust layer. Records every interaction as a verifiable receipt.
-- Slashing: Malicious behavior can trigger collateral slashing.
-- Dynamic Scoring: Reputation evolves based on volume, success rates, and ratings.
+- Dynamic Scoring: Reputation score updates on every verified transaction (success rate based).
+- Slashing and staked collateral: On the roadmap.
 
 ---
 
@@ -71,8 +71,7 @@ The trust layer. Records every interaction as a verifiable receipt.
 
 Sigil is designed to integrate seamlessly into the existing AI stack:
 
-- x402 Middleware: Gate API endpoints by Sigil reputation or stake.
-- MCP Plugins: Secure Model Context Protocol servers with agent verification.
+- x402 Middleware: Gate API endpoints by Sigil credential and spend limits.
 - TypeScript SDK: A unified client for issuing, discovering, and verifying Sigils.
 
 ---
@@ -96,15 +95,23 @@ anchor build
 
 ```typescript
 import { SigilClient } from '@sigil/sdk';
+import { Connection } from '@solana/web3.js';
+import BN from 'bn.js';
 
-const client = new SigilClient({ cluster: 'devnet' });
+const client = new SigilClient({
+  connection: new Connection('https://api.devnet.solana.com'),
+  wallet: principalWallet,
+});
 
 // Issue a new Sigil to an agent
-const sigil = await client.issueSigil({
+const txSig = await client.issueSigil({
   agent: agentPublicKey,
-  capabilities: ['image-generation'],
-  spendLimit: { perTx: 0.10, perDay: 5.00 },
-  stake: 1.0 // SOL
+  capabilities: [{ category: 'image-generation', allowedDomains: [] }],
+  spendLimits: {
+    perTx: new BN(100_000),  // 0.10 USDC (6 decimals)
+    perDay: new BN(5_000_000), // 5.00 USDC
+  },
+  expiresAt: new BN(Math.floor(Date.now() / 1000) + 86_400 * 30), // 30 days
 });
 ```
 
@@ -117,13 +124,13 @@ sigil/
 ├── programs/           # Solana Anchor Programs (Rust)
 │   ├── credential/     # Identity and Authorization
 │   ├── registry/       # Discovery and Marketplace
-│   └── reputation/     # Receipts and Slashing
-├── packages/           # Frontend and Middleware SDKs
-│   ├── sdk/            # Unified TS Client
-│   ├── x402/           # Payment Gating
-│   └── mcp/            # MCP Verification
+│   └── reputation/     # Receipts (in development)
+├── packages/           # SDKs and Middleware
+│   ├── sdk/            # Unified TypeScript Client
+│   └── x402-middleware/ # Express / Next.js Payment Gating
 ├── apps/               # Reference Implementations
-│   └── web/            # Next.js 15 Principal Interface
+│   ├── web/            # Next.js Principal Dashboard + Landing
+│   └── docs/           # Mintlify documentation site
 └── Anchor.toml         # Program configuration
 ```
 

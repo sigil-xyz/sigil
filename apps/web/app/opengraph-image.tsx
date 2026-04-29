@@ -95,7 +95,7 @@ export default function OGImage() {
             Cryptographic identity for the agent economy
           </div>
 
-          {/* Stats row */}
+          {/* Taglines row */}
           <div
             style={{
               display: "flex",
@@ -104,33 +104,21 @@ export default function OGImage() {
             }}
           >
             {[
-              { value: "847", label: "Active Agents" },
-              { value: "12.4k", label: "Verified Txns" },
-              { value: "$2.3M", label: "Protected Daily" },
-            ].map((stat, i) => (
-              <div key={i} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                <div
-                  style={{
-                    fontFamily: "monospace",
-                    fontSize: 28,
-                    fontWeight: 600,
-                    color: "#0a0a0a",
-                    letterSpacing: "-0.01em",
-                  }}
-                >
-                  {stat.value}
-                </div>
-                <div
-                  style={{
-                    fontFamily: "monospace",
-                    fontSize: 11,
-                    color: "rgba(0,0,0,0.35)",
-                    letterSpacing: "0.2em",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  {stat.label}
-                </div>
+              "Cryptographic identity",
+              "On-chain trust scores",
+              "Agent authorization",
+            ].map((tag, i) => (
+              <div
+                key={i}
+                style={{
+                  fontFamily: "monospace",
+                  fontSize: 13,
+                  color: "rgba(0,0,0,0.35)",
+                  letterSpacing: "0.15em",
+                  textTransform: "uppercase",
+                }}
+              >
+                {tag}
               </div>
             ))}
           </div>

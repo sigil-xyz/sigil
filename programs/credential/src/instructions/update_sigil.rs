@@ -25,6 +25,7 @@ pub struct UpdateSigil<'info> {
 
 pub fn handler(ctx: Context<UpdateSigil>, params: UpdateSigilParams) -> Result<()> {
     let sigil = &mut ctx.accounts.sigil;
+    let clock = Clock::get()?;
 
     require_keys_eq!(
         sigil.principal_pubkey,
@@ -33,6 +34,7 @@ pub fn handler(ctx: Context<UpdateSigil>, params: UpdateSigilParams) -> Result<(
     );
 
     require!(!sigil.revoked, SigilError::Revoked);
+    require!(clock.unix_timestamp < sigil.expires_at, SigilError::Expired);
 
     sigil.spend_limit_per_tx = params.spend_limit_per_tx;
     sigil.spend_limit_per_day = params.spend_limit_per_day;

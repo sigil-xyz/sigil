@@ -196,7 +196,7 @@ export class SigilClient {
     }
 
     if (sigil.revoked) return false;
-    if (sigil.expiresAt.toNumber() < Math.floor(Date.now() / 1000)) return false;
+    if (sigil.expiresAt.ltn(Math.floor(Date.now() / 1000))) return false;
 
     if (options.requiredCapability) {
       const has = sigil.capabilities.some(
