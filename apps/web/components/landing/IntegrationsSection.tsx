@@ -119,7 +119,7 @@ export function IntegrationsSection() {
   const headingRef = useRef(null);
   const isInView = useInView(headingRef, { once: true, margin: "-60px" });
 
-  const sdkCode = `import { Sigil } from "@sigil/sdk";
+  const sdkCode = `import { Sigil } from "@sigil-xyz/sdk";
 
 const sigil = new Sigil({ rpc: helius.rpcUrl, wallet: provider });
 
@@ -199,7 +199,7 @@ const agents = await sigil.registry.find({ capability: "image-generation", minRe
             </div>
             <div className="flex items-center justify-between sm:justify-end gap-3">
               <span className="font-mono text-[9px] md:text-[10px] text-muted-foreground/80 bg-background/50 border border-border/50 rounded-full px-3 py-1">
-                @sigil/sdk
+                @sigil-xyz/sdk
               </span>
               <CopyButton text={sdkCode} />
             </div>

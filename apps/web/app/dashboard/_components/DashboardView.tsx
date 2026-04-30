@@ -17,7 +17,6 @@ const WalletMultiButton = dynamic(
   { ssr: false }
 );
 import { useSigils } from "@/hooks/useSigils";
-import { MOCK_PRINCIPAL, MOCK_SIGILS } from "@/data/mock";
 import type { Sigil } from "@/types";
 import { cn } from "@/lib/utils";
 import { sigilAccountToUi } from "@/lib/sigil/accountToUi";
@@ -75,20 +74,17 @@ export function DashboardView() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
-  const sigils = connected && onChainSigils.length > 0
+  const sigils: Sigil[] = connected
     ? onChainSigils.map(sigilAccountToUi)
-    : connected && !loading ? [] : MOCK_SIGILS;
+    : [];
 
-  const principal = connected && publicKey
-    ? {
-        ...MOCK_PRINCIPAL,
-        walletAddress: publicKey.toBase58(),
-        totalIssued: sigils.length,
-        activeCount: sigils.filter((s) => s.status === "active").length,
-        revokedCount: sigils.filter((s) => s.status === "revoked").length,
-        expiredCount: sigils.filter((s) => s.status === "expired").length,
-      }
-    : MOCK_PRINCIPAL;
+  const principal = {
+    walletAddress: publicKey?.toBase58() ?? "",
+    totalIssued: sigils.length,
+    activeCount: sigils.filter((s) => s.status === "active").length,
+    revokedCount: sigils.filter((s) => s.status === "revoked").length,
+    expiredCount: sigils.filter((s) => s.status === "expired").length,
+  };
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -158,7 +154,7 @@ export function DashboardView() {
               <div key={stat.label} className="p-6 md:p-8 lg:p-10 relative group overflow-hidden bg-background hover:bg-foreground/[0.01] transition-colors border-border/40">
                 <stat.icon size={16} strokeWidth={2} className="text-foreground/40 absolute top-6 right-6 md:top-8 md:right-8" />
                 <div className="font-mono text-[2rem] md:text-[3rem] lg:text-[4rem] font-light text-foreground tabular-nums leading-none tracking-tighter mb-4">
-                  {stat.loading ? <Skeleton className="h-[3rem] md:h-[4rem] w-24" /> : stat.value}
+                  {stat.loading ? <Skeleton className="h-[3rem] md:h-[4rem] w-24" /> : connected ? stat.value : "—"}
                 </div>
                 <div className="font-mono text-[9px] md:text-[10px] tracking-[0.25em] text-muted-foreground/50 uppercase">
                   {stat.label}
@@ -177,8 +173,8 @@ export function DashboardView() {
                   Active Ledger
                 </h2>
                 {!connected && (
-                  <p className="font-mono text-[10px] text-amber-600 uppercase tracking-widest flex items-center gap-2">
-                    <Shield size={10} /> Viewing Public Demo Data
+                  <p className="font-mono text-[10px] text-muted-foreground/50 uppercase tracking-widest flex items-center gap-2">
+                    <Shield size={10} /> Connect wallet to view your sigils
                   </p>
                 )}
               </div>

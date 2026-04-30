@@ -81,12 +81,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         style={{ borderBottomStyle: "solid" }}
         transition={{ duration: 0.35, ease: "easeInOut" }}
       >
-        <div className="max-w-7xl mx-auto px-6 md:px-10 h-[84px] flex items-center justify-between relative">
+        <div className="max-w-[1440px] mx-auto px-6 md:px-12 h-[84px] flex items-center justify-between relative">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group shrink-0 relative z-10">
+          <Link href="/" className="flex items-center gap-3.5 group shrink-0 relative z-10">
             <SigilLogo
-              width={24}
-              height={28}
+              width={22}
+              height={26}
               className="text-foreground shrink-0 transition-opacity group-hover:opacity-60"
             />
             <span className="hero-display text-[2.2rem] leading-none text-foreground tracking-tighter">
@@ -95,35 +95,55 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-1 bg-foreground/[0.03] border border-border/40 p-1 rounded-full backdrop-blur-sm absolute left-1/2 -translate-x-1/2">
+          <nav className="hidden lg:flex items-center gap-2 absolute left-1/2 -translate-x-1/2 p-1.5 rounded-full border border-border/40 bg-foreground/[0.02] backdrop-blur-md">
             {navLinks.map((link) => {
               const isExternal = "external" in link && link.external;
-              const active = !isExternal && (pathname === link.href || pathname.startsWith(link.href + "/"));
+              const isProfileLink = link.href === "/dashboard/profile";
+              const isDashboardLink = link.href === "/dashboard";
+              
+              // Logic: 
+              // 1. Profile link is active only if exact match.
+              // 2. Dashboard link is active if it starts with /dashboard BUT NOT on the profile page.
+              // 3. Other links use standard prefix matching.
+              const active = !isExternal && (
+                pathname === link.href || 
+                (isDashboardLink ? (pathname.startsWith("/dashboard") && pathname !== "/dashboard/profile") : 
+                 !isProfileLink && pathname.startsWith(link.href + "/"))
+              );
+
               return (
                 <Link
                   key={link.href}
                   href={link.href}
                   {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                   className={cn(
-                    "px-6 py-2 rounded-full text-[13px] font-medium transition-all duration-300",
-                    active
-                      ? "bg-foreground/5 text-foreground"
-                      : "text-muted-foreground hover:text-foreground hover:bg-foreground/5"
+                    "relative px-5 py-2 text-[14px] font-medium transition-colors duration-300 rounded-full",
+                    active ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                   )}
                 >
-                  {link.label}
+                  {active && (
+                    <motion.div
+                      layoutId="active-nav-pill"
+                      className="absolute inset-0 bg-background shadow-sm border border-border/50 rounded-full"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                  <span className="relative z-10 flex items-center gap-2">
+                    {link.label}
+                    {isExternal && <ChevronRight size={12} className="-rotate-45 opacity-50" />}
+                  </span>
                 </Link>
               );
             })}
           </nav>
 
           {/* Desktop Actions */}
-          <div className="flex items-center gap-3 relative z-10">
+          <div className="flex items-center gap-6 relative z-10">
             {!connected && (
-              <div className="hidden sm:flex items-center gap-2 rounded-full border border-amber-300/50 bg-amber-50/80 px-3 py-2 text-amber-700 shadow-sm">
-                <ShieldAlert size={13} className="shrink-0" />
-                <span className="font-mono text-[10px] font-medium uppercase tracking-[0.12em] leading-none">
-                  Demo active
+              <div className="hidden min-[1200px]:flex items-center gap-2.5 px-4 py-2 rounded-full border border-border/40 bg-foreground/[0.01] text-muted-foreground/40">
+                <ShieldAlert size={12} className="shrink-0 opacity-40" />
+                <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] leading-none">
+                  Node Status: Demo
                 </span>
               </div>
             )}
@@ -134,24 +154,28 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   <button 
                     onClick={() => setDropdownOpen(!dropdownOpen)}
                     className={cn(
-                      "flex items-center gap-3 pl-4 pr-1.5 py-1.5 rounded-full border border-border/40 transition-all duration-300 hover:bg-foreground/5 group",
-                      dropdownOpen ? "bg-foreground/5 border-border" : "bg-white/40"
+                      "flex items-center gap-4 pl-5 pr-2 py-2 rounded-2xl border border-border/40 transition-all duration-500 hover:bg-foreground/[0.02] group",
+                      dropdownOpen ? "bg-foreground/[0.02] border-border/60" : "bg-transparent"
                     )}
                   >
-                    <div className="flex flex-col items-end justify-center">
-                      <span className="font-mono text-[11px] text-foreground font-bold tracking-tight leading-none uppercase">
-                        {principal.name?.split(' ')[0]}
+                    <div className="flex flex-col items-end">
+                      <span className="font-mono text-[10px] text-foreground font-bold tracking-[0.1em] uppercase leading-none">
+                        {principal.name}
                       </span>
-                      <span className="font-mono text-[9px] text-muted-foreground/50 leading-none mt-1">
+                      <span className="font-mono text-[9px] text-muted-foreground/30 leading-none mt-1.5 uppercase tracking-tighter">
                         {addressShort}
                       </span>
                     </div>
-                    <div className="w-9 h-9 rounded-full overflow-hidden border border-border/40 bg-muted transition-all duration-500 shadow-sm">
-                      <img 
-                        src={principal.avatarUrl} 
-                        alt="Profile" 
-                        className="w-full h-full object-cover"
-                      />
+                    <div className="w-10 h-10 rounded-xl overflow-hidden border border-border/40 bg-muted grayscale group-hover:grayscale-0 transition-all duration-700 shadow-inner flex items-center justify-center">
+                      {principal.avatarUrl ? (
+                        <img 
+                          src={principal.avatarUrl} 
+                          alt="Profile" 
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        />
+                      ) : (
+                        <User size={20} className="text-muted-foreground/40" />
+                      )}
                     </div>
                   </button>
 
@@ -204,7 +228,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   </AnimatePresence>
                 </div>
               ) : (
-                <WalletMultiButton className="!bg-foreground !text-background !border-none !font-semibold !text-[13px] !h-11 !px-8 !rounded-full !transition-all hover:!opacity-90 active:!scale-95 !shadow-lg !shadow-foreground/5" />
+                <WalletMultiButton className="!bg-foreground !text-background !border-none !font-mono !font-bold !text-[11px] !tracking-[0.2em] !uppercase !h-11 !px-8 !rounded-2xl !transition-all hover:!opacity-90 active:!scale-95 !shadow-xl !shadow-foreground/5" />
               )}
             </div>
 
@@ -234,12 +258,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           >
             <div className="absolute inset-0 bg-background/96 backdrop-blur-xl border-b border-border shadow-2xl" />
             
-            <nav className="relative z-10 max-w-7xl mx-auto w-full px-8 py-10 flex flex-col gap-1 flex-1">
+            <nav className="relative z-10 max-w-7xl mx-auto w-full px-8 py-10 flex flex-col gap-1.5 flex-1">
               {!connected && (
-                <div className="mb-5 flex items-center gap-2 rounded-full border border-amber-300/50 bg-amber-50/80 px-3 py-2 text-amber-700 w-fit">
-                  <ShieldAlert size={13} className="shrink-0" />
-                  <span className="font-mono text-[10px] font-medium uppercase tracking-[0.12em] leading-none">
-                    Demo mode active
+                <div className="mb-8 flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-border/40 bg-foreground/[0.02] text-muted-foreground/40 w-fit">
+                  <ShieldAlert size={12} className="shrink-0 opacity-40" />
+                  <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] leading-none">
+                    Node Status: Demo
                   </span>
                 </div>
               )}
@@ -259,14 +283,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                       onClick={() => setMobileOpen(false)}
                       {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                       className={cn(
-                        "flex items-center justify-between p-4 rounded-2xl transition-all duration-200",
+                        "flex items-center justify-between p-5 rounded-2xl transition-all duration-300",
                         active
-                          ? "bg-foreground/5 text-foreground"
-                          : "text-foreground/60 hover:text-foreground hover:bg-foreground/[0.02]"
+                          ? "bg-foreground/[0.03] text-foreground border border-border/40"
+                          : "text-foreground/40 hover:text-foreground hover:bg-foreground/[0.01]"
                       )}
                     >
-                      <span className="text-[20px] font-medium tracking-tight">{link.label}</span>
-                      <ChevronRight size={18} className={cn("transition-transform", active ? "opacity-100" : "opacity-0")} />
+                      <span className="font-mono text-[14px] uppercase tracking-[0.2em] font-bold">{link.label}</span>
+                      <ChevronRight size={18} className={cn("transition-all duration-300", active ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-2")} />
                     </Link>
                   </motion.div>
                 );
@@ -276,8 +300,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 {connected ? (
                   <div className="space-y-4">
                     <div className="flex items-center gap-4 p-4 bg-foreground/[0.02] rounded-2xl border border-border/40">
-                      <div className="w-12 h-12 rounded-full overflow-hidden border border-border/40">
-                         <img src={principal.avatarUrl} alt="Profile" className="w-full h-full object-cover" />
+                      <div className="w-12 h-12 rounded-full overflow-hidden border border-border/40 bg-muted flex items-center justify-center">
+                         {principal.avatarUrl ? (
+                           <img src={principal.avatarUrl} alt="Profile" className="w-full h-full object-cover" />
+                         ) : (
+                           <User size={24} className="text-muted-foreground/40" />
+                         )}
                       </div>
                       <div className="flex flex-col">
                         <span className="font-mono text-[10px] text-muted-foreground/60 uppercase tracking-widest leading-none mb-1">Active Principal</span>

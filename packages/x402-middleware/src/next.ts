@@ -27,7 +27,7 @@ type NextRouteHandler = (
  * @example
  * ```ts
  * // app/api/generate/route.ts
- * import { withSigilAuth } from "@sigil/x402/next";
+ * import { withSigilAuth } from "@sigil-xyz/x402/next";
  *
  * export const POST = withSigilAuth(
  *   async (req) => {

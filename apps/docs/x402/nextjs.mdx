@@ -6,16 +6,16 @@ description: Protect Next.js App Router route handlers with Sigil credential ver
 ## Install
 
 ```bash
-npm install @sigil/x402 next
+npm install @sigil-xyz/x402 next
 ```
 
 ## Import
 
 ```ts
-import { withSigilAuth } from '@sigil/x402/next'
+import { withSigilAuth } from '@sigil-xyz/x402/next'
 ```
 
-`@sigil/x402/next` is a separate subpath — do not import from `@sigil/x402` for Next.js usage.
+`@sigil-xyz/x402/next` is a separate subpath — do not import from `@sigil-xyz/x402` for Next.js usage.
 
 ## Basic usage
 
@@ -23,7 +23,7 @@ Wrap your route handler with `withSigilAuth`:
 
 ```ts
 // app/api/generate/route.ts
-import { withSigilAuth } from '@sigil/x402/next'
+import { withSigilAuth } from '@sigil-xyz/x402/next'
 import { NextRequest, NextResponse } from 'next/server'
 import { Connection } from '@solana/web3.js'
 import BN from 'bn.js'
@@ -70,7 +70,7 @@ Define the middleware config once and reuse it across routes:
 
 ```ts
 // lib/sigil.ts
-import { SigilMiddlewareConfig } from '@sigil/x402'
+import { SigilMiddlewareConfig } from '@sigil-xyz/x402'
 import { Connection } from '@solana/web3.js'
 import BN from 'bn.js'
 
@@ -84,7 +84,7 @@ export const baseConfig: Omit<SigilMiddlewareConfig, 'requiredCapability' | 'spe
 
 ```ts
 // app/api/generate/route.ts
-import { withSigilAuth } from '@sigil/x402/next'
+import { withSigilAuth } from '@sigil-xyz/x402/next'
 import { baseConfig } from '@/lib/sigil'
 import BN from 'bn.js'
 
@@ -97,10 +97,10 @@ export const POST = withSigilAuth(handler, {
 
 ## Building agent headers
 
-Use `buildSigilHeaders` from `@sigil/x402` in your agent code to construct the signed headers:
+Use `buildSigilHeaders` from `@sigil-xyz/x402` in your agent code to construct the signed headers:
 
 ```ts
-import { buildSigilHeaders } from '@sigil/x402'
+import { buildSigilHeaders } from '@sigil-xyz/x402'
 import { Keypair } from '@solana/web3.js'
 import BN from 'bn.js'
 

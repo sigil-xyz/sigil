@@ -20,7 +20,7 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@sigil/sdk": ["../../packages/sdk/src/index.ts"]
+      "@sigil-xyz/sdk": ["../../packages/sdk/src/index.ts"]
     }
   },
   "include": [

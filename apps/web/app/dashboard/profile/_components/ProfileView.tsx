@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Camera, Save, Globe, Mail, Building, User, ArrowLeft, LogOut, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,10 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { usePrincipal } from "@/providers/PrincipalProvider";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+
+function defaultAvatar(wallet: string) {
+  return `https://api.dicebear.com/7.x/shapes/svg?seed=${wallet || "sigil"}`;
+}
 
 function Toast({ message, onDone }: { message: string; onDone: () => void }) {
   return (
@@ -32,24 +36,29 @@ export function ProfileView() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
-    name: principal.name || "",
-    email: principal.email || "",
-    company: principal.company || "",
-    bio: principal.bio || "",
-    avatarUrl: principal.avatarUrl || "https://api.dicebear.com/7.x/shapes/svg?seed=sigil",
+    name: "",
+    email: "",
+    company: "",
+    bio: "",
+    avatarUrl: defaultAvatar(""),
   });
 
-  const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
+  // Sync form when principal loads from localStorage (after wallet connect)
+  useEffect(() => {
+    setFormData({
+      name: principal.name || "",
+      email: principal.email || "",
+      company: principal.company || "",
+      bio: principal.bio || "",
+      avatarUrl: principal.avatarUrl || defaultAvatar(principal.walletAddress),
+    });
+  }, [principal.walletAddress]);
+
   const handleSave = () => {
-    setSaving(true);
-    // Simulate API call
-    setTimeout(() => {
-      updatePrincipal(formData);
-      setSaving(false);
-      setToast("IDENTITY_SYNCHRONIZED_SUCCESSFULLY");
-    }, 1200);
+    updatePrincipal(formData);
+    setToast("IDENTITY_SYNCHRONIZED_SUCCESSFULLY");
   };
 
   const handleImageClick = () => {
@@ -58,11 +67,13 @@ export function ProfileView() {
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setFormData((prev) => ({ ...prev, avatarUrl: url }));
-      setToast("AVATAR_PREVIEW_LOADED");
-    }
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const base64 = ev.target?.result as string;
+      setFormData((prev) => ({ ...prev, avatarUrl: base64 }));
+    };
+    reader.readAsDataURL(file);
   };
 
   return (
@@ -90,151 +101,156 @@ export function ProfileView() {
           </div>
         </SectionReveal>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-16">
-          {/* Avatar Section */}
-          <div className="md:col-span-4">
-            <SectionReveal delay={0.1}>
-              <div className="relative group">
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  className="hidden"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                />
-                <div
-                  onClick={handleImageClick}
-                  className="aspect-square bg-foreground/5 border border-border/40 overflow-hidden relative cursor-pointer"
-                >
-                  <img 
-                    src={formData.avatarUrl} 
-                    alt="Profile" 
-                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-700"
-                  />                  <div className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
-                    <div className="flex flex-col items-center gap-2 text-foreground">
-                      <Camera size={24} strokeWidth={1.5} />
-                      <span className="font-mono text-[9px] tracking-[0.2em] uppercase">Update Image</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-6 flex flex-col gap-2">
-                  <span className="font-mono text-[9px] tracking-[0.2em] text-muted-foreground/40 uppercase">Connected Wallet</span>
-                  <span className="font-mono text-[11px] text-foreground break-all">
-                    {publicKey?.toBase58() || principal.walletAddress}
-                  </span>
-                </div>
-              </div>
-            </SectionReveal>
-          </div>
-
-          {/* Form Section */}
-          <div className="md:col-span-8">
-            <SectionReveal delay={0.15}>
-              <div className="space-y-10">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                  <div className="space-y-3">
-                    <label className="font-mono text-[9px] tracking-[0.2em] text-muted-foreground/40 uppercase flex items-center gap-2">
-                      <User size={12} className="text-foreground/20" />
-                      Display Name
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full bg-transparent border-b border-border/40 py-2 font-mono text-[13px] focus:border-foreground transition-colors outline-none"
-                      placeholder="Principal Name"
-                    />
-                  </div>
-                  <div className="space-y-3">
-                    <label className="font-mono text-[9px] tracking-[0.2em] text-muted-foreground/40 uppercase flex items-center gap-2">
-                      <Building size={12} className="text-foreground/20" />
-                      Organization
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.company}
-                      onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                      className="w-full bg-transparent border-b border-border/40 py-2 font-mono text-[13px] focus:border-foreground transition-colors outline-none"
-                      placeholder="Company Name"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <label className="font-mono text-[9px] tracking-[0.2em] text-muted-foreground/40 uppercase flex items-center gap-2">
-                    <Mail size={12} className="text-foreground/20" />
-                    Contact Email
-                  </label>
+        {!connected ? (
+          <SectionReveal delay={0.1}>
+            <div className="py-24 flex flex-col items-center justify-center text-center border border-border/40 bg-foreground/[0.01]">
+              <ShieldCheck size={32} strokeWidth={1} className="text-muted-foreground/20 mb-6" />
+              <p className="font-mono text-[11px] text-muted-foreground/50 uppercase tracking-widest">
+                Connect your wallet to manage your identity
+              </p>
+            </div>
+          </SectionReveal>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-16">
+            {/* Avatar Section */}
+            <div className="md:col-span-4">
+              <SectionReveal delay={0.1}>
+                <div className="relative group">
                   <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full bg-transparent border-b border-border/40 py-2 font-mono text-[13px] focus:border-foreground transition-colors outline-none"
-                    placeholder="ops@organization.io"
+                    type="file"
+                    ref={fileInputRef}
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleImageChange}
                   />
-                </div>
-
-                <div className="space-y-3">
-                  <label className="font-mono text-[9px] tracking-[0.2em] text-muted-foreground/40 uppercase flex items-center gap-2">
-                    <Globe size={12} className="text-foreground/20" />
-                    Strategic Bio
-                  </label>
-                  <textarea
-                    value={formData.bio}
-                    onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                    rows={4}
-                    className="w-full bg-transparent border border-border/40 p-4 font-mono text-[13px] focus:border-foreground transition-colors outline-none resize-none"
-                    placeholder="Describe your role in the agent economy..."
-                  />
-                </div>
-
-                <div className="pt-8 flex justify-end">
-                  <Button
-                    onClick={handleSave}
-                    disabled={saving}
-                    className="rounded-none bg-white border border-black/10 hover:border-black/20 hover:bg-black/[0.02] text-black px-12 h-14 text-[11px] font-mono tracking-[0.2em] uppercase transition-all flex items-center gap-3"
+                  <div
+                    onClick={handleImageClick}
+                    className="aspect-square bg-foreground/5 border border-border/40 overflow-hidden relative cursor-pointer"
                   >
-                    {saving ? (
-                      <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
-                    ) : (
-                      <Save size={14} />
-                    )}
-                    {saving ? "Synchronizing..." : "Update Identity"}
-                  </Button>
-                </div>
-              </div>
-            </SectionReveal>
-
-            {/* Wallet Management Section */}
-            <SectionReveal delay={0.2}>
-              <div className="mt-20 pt-12 border-t border-border/40">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
-                  <div className="space-y-2">
-                    <div className="font-mono text-[9px] tracking-[0.2em] text-muted-foreground/40 uppercase flex items-center gap-2">
-                      <ShieldCheck size={12} className="text-emerald-500/60" />
-                      Security & Access
+                    <img
+                      src={formData.avatarUrl}
+                      alt="Profile"
+                      className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-700"
+                    />
+                    <div className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                      <div className="flex flex-col items-center gap-2 text-foreground">
+                        <Camera size={24} strokeWidth={1.5} />
+                        <span className="font-mono text-[9px] tracking-[0.2em] uppercase">Update Image</span>
+                      </div>
                     </div>
-                    <h3 className="hero-display text-[1.5rem] text-foreground">
-                      Principal Wallet
-                    </h3>
-                    <p className="font-mono text-[11px] text-muted-foreground/60 max-w-md">
-                      Your identity is cryptographically tied to this Solana address. Disconnecting will end your current session.
-                    </p>
+                  </div>
+                  <div className="mt-6 flex flex-col gap-2">
+                    <span className="font-mono text-[9px] tracking-[0.2em] text-muted-foreground/40 uppercase">Connected Wallet</span>
+                    <span className="font-mono text-[11px] text-foreground break-all">
+                      {publicKey?.toBase58()}
+                    </span>
+                  </div>
+                </div>
+              </SectionReveal>
+            </div>
+
+            {/* Form Section */}
+            <div className="md:col-span-8">
+              <SectionReveal delay={0.15}>
+                <div className="space-y-10">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                    <div className="space-y-3">
+                      <label className="font-mono text-[9px] tracking-[0.2em] text-muted-foreground/40 uppercase flex items-center gap-2">
+                        <User size={12} className="text-foreground/20" />
+                        Display Name
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className="w-full bg-transparent border-b border-border/40 py-2 font-mono text-[13px] focus:border-foreground transition-colors outline-none"
+                        placeholder="Principal Name"
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <label className="font-mono text-[9px] tracking-[0.2em] text-muted-foreground/40 uppercase flex items-center gap-2">
+                        <Building size={12} className="text-foreground/20" />
+                        Organization
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.company}
+                        onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                        className="w-full bg-transparent border-b border-border/40 py-2 font-mono text-[13px] focus:border-foreground transition-colors outline-none"
+                        placeholder="Company Name"
+                      />
+                    </div>
                   </div>
 
-                  <div className="flex flex-col items-end gap-4">
-                    <div className="px-4 py-2 bg-foreground/[0.02] border border-border/40 rounded-lg flex items-center gap-3">
-                      <div className={cn("w-2 h-2 rounded-full", connected ? "bg-emerald-500 animate-pulse" : "bg-muted-foreground/20")} />
-                      <span className="font-mono text-[11px] text-foreground">
-                        {publicKey ? (
-                          <>{publicKey.toBase58().slice(0, 8)}...{publicKey.toBase58().slice(-8)}</>
-                        ) : (
-                          "NOT CONNECTED"
-                        )}
-                      </span>
+                  <div className="space-y-3">
+                    <label className="font-mono text-[9px] tracking-[0.2em] text-muted-foreground/40 uppercase flex items-center gap-2">
+                      <Mail size={12} className="text-foreground/20" />
+                      Contact Email
+                    </label>
+                    <input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="w-full bg-transparent border-b border-border/40 py-2 font-mono text-[13px] focus:border-foreground transition-colors outline-none"
+                      placeholder="ops@organization.io"
+                    />
+                  </div>
+
+                  <div className="space-y-3">
+                    <label className="font-mono text-[9px] tracking-[0.2em] text-muted-foreground/40 uppercase flex items-center gap-2">
+                      <Globe size={12} className="text-foreground/20" />
+                      Strategic Bio
+                    </label>
+                    <textarea
+                      value={formData.bio}
+                      onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                      rows={4}
+                      className="w-full bg-transparent border border-border/40 p-4 font-mono text-[13px] focus:border-foreground transition-colors outline-none resize-none"
+                      placeholder="Describe your role in the agent economy..."
+                    />
+                  </div>
+
+                  <div className="pt-8 flex justify-end">
+                    <Button
+                      onClick={handleSave}
+                      className="rounded-none bg-white border border-black/10 hover:border-black/20 hover:bg-black/[0.02] text-black px-12 h-14 text-[11px] font-mono tracking-[0.2em] uppercase transition-all flex items-center gap-3"
+                    >
+                      <Save size={14} />
+                      Update Identity
+                    </Button>
+                  </div>
+                </div>
+              </SectionReveal>
+
+              {/* Wallet Management Section */}
+              <SectionReveal delay={0.2}>
+                <div className="mt-20 pt-12 border-t border-border/40">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
+                    <div className="space-y-2">
+                      <div className="font-mono text-[9px] tracking-[0.2em] text-muted-foreground/40 uppercase flex items-center gap-2">
+                        <ShieldCheck size={12} className="text-emerald-500/60" />
+                        Security & Access
+                      </div>
+                      <h3 className="hero-display text-[1.5rem] text-foreground">
+                        Principal Wallet
+                      </h3>
+                      <p className="font-mono text-[11px] text-muted-foreground/60 max-w-md">
+                        Your identity is cryptographically tied to this Solana address. Disconnecting will end your current session.
+                      </p>
                     </div>
 
-                    {connected && (
+                    <div className="flex flex-col items-end gap-4">
+                      <div className="px-4 py-2 bg-foreground/[0.02] border border-border/40 rounded-lg flex items-center gap-3">
+                        <div className={cn("w-2 h-2 rounded-full", connected ? "bg-emerald-500 animate-pulse" : "bg-muted-foreground/20")} />
+                        <span className="font-mono text-[11px] text-foreground">
+                          {publicKey ? (
+                            <>{publicKey.toBase58().slice(0, 8)}...{publicKey.toBase58().slice(-8)}</>
+                          ) : (
+                            "NOT CONNECTED"
+                          )}
+                        </span>
+                      </div>
+
                       <Button
                         onClick={() => disconnect()}
                         variant="ghost"
@@ -243,13 +259,13 @@ export function ProfileView() {
                         <LogOut size={14} />
                         Terminate Session
                       </Button>
-                    )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </SectionReveal>
+              </SectionReveal>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <AnimatePresence>

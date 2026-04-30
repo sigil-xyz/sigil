@@ -8,7 +8,7 @@ description: The single entry point for all Sigil program interactions.
 ## Constructor
 
 ```ts
-import { SigilClient } from '@sigil/sdk'
+import { SigilClient } from '@sigil-xyz/sdk'
 
 const client = new SigilClient(config: SigilClientConfig)
 ```
@@ -57,7 +57,7 @@ Returns `[pda, bump]` for the Registry listing of a given Sigil PDA. Derived fro
 ## Example setup
 
 ```ts
-import { SigilClient } from '@sigil/sdk'
+import { SigilClient } from '@sigil-xyz/sdk'
 import { Connection, Keypair } from '@solana/web3.js'
 import { readFileSync } from 'fs'
 

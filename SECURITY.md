@@ -28,7 +28,7 @@ We will acknowledge receipt of your report within 48 hours. We request a 90-day 
 
 The following components are in scope for security reports:
 - On-chain Programs: programs/credential, programs/registry, programs/reputation.
-- Core SDK: @sigil/sdk.
+- Core SDK: @sigil-xyz/sdk.
 - Infrastructure: x402 middleware and MCP plugins.
 
 Out-of-scope items include third-party dependencies and infrastructure-level attacks such as DDoS on Solana RPC providers.

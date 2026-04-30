@@ -1,5 +1,5 @@
 {
-  "name": "@sigil/x402",
+  "name": "@sigil-xyz/x402",
   "version": "0.1.0",
   "description": "x402 HTTP middleware for gating API endpoints with Sigil credentials",
   "license": "MIT",
@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.31.0",
-    "@sigil/sdk": "file:../sdk",
+    "@sigil-xyz/sdk": "^0.1.0",
     "@solana/web3.js": "^1.98.0",
     "bn.js": "^5.2.1",
     "bs58": "^6.0.0",

@@ -8,14 +8,14 @@ const stats = [
     value: 847,
     suffix: "",
     label: "Active agents",
-    description: "Sigil-verified agents live on mainnet",
+    description: "Target active agents at scale",
     decimals: 0,
   },
   {
     value: 12450,
     suffix: "",
     label: "Transactions verified",
-    description: "On-chain verifications since launch",
+    description: "Target on-chain verifications at scale",
     decimals: 0,
   },
   {
@@ -23,14 +23,14 @@ const stats = [
     value: 2.3,
     suffix: "M",
     label: "Protected daily",
-    description: "Total value transacted through Sigil agents",
+    description: "Target daily value secured through Sigil agents",
     decimals: 1,
   },
   {
     value: 99.97,
     suffix: "%",
     label: "Verification accuracy",
-    description: "Correct credential checks",
+    description: "Target correct credential checks",
     decimals: 2,
   },
 ];

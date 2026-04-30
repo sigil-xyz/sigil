@@ -5,7 +5,6 @@ import { MarqueeStrip } from "@/components/landing/MarqueeStrip";
 import { ProblemSection } from "@/components/landing/ProblemSection";
 import { HowItWorksSection } from "@/components/landing/HowItWorksSection";
 import { FeaturesSection } from "@/components/landing/FeaturesSection";
-import { StatsSection } from "@/components/landing/StatsSection";
 import { IntegrationsSection } from "@/components/landing/IntegrationsSection";
 import { CTASection } from "@/components/landing/CTASection";
 import { Footer } from "@/components/landing/Footer";
@@ -22,8 +21,7 @@ export default function Home() {
         <ProblemSection />
         <HowItWorksSection />
         <FeaturesSection />
-        <StatsSection />
-        <IntegrationsSection />
+<IntegrationsSection />
         <CTASection />
       </main>
       <Footer />

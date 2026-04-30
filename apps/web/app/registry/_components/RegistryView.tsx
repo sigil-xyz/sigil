@@ -7,7 +7,6 @@ import { Search, SlidersHorizontal, X, ArrowUpRight, Globe, Zap, Cpu, Activity, 
 import { CapabilityBadge } from "@/components/app/CapabilityBadge";
 import { ReputationStars } from "@/components/app/ReputationStars";
 import { SectionReveal } from "@/components/app/SectionReveal";
-import { MOCK_AGENTS } from "@/data/mock";
 import type { Agent, CapabilityType, PricingModel } from "@/types";
 import { cn } from "@/lib/utils";
 import { useRegistry } from "@/hooks/useRegistry";
@@ -171,9 +170,7 @@ export function RegistryView() {
   const [sortKey, setSortKey] = useState<SortKey>("reputation");
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  const allAgents: Agent[] = listings.length > 0
-    ? listings.map(listingToAgent)
-    : registryLoading ? [] : MOCK_AGENTS;
+  const allAgents: Agent[] = listings.map(listingToAgent);
 
   function toggleCap(cap: CapabilityType) {
     setSelectedCaps((prev) => {
