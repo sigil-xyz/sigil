@@ -8,7 +8,7 @@ skip-lint = false
 [programs.devnet]
 credential = "ZFK63KBXDhGCYm5orVo5QiTBaBhWD4PUcUDBG6fjTkH"
 registry = "Ecmeikh16PZNtNUY5ZTQAKLSdkQWpx6uRo6gUTkoBURW"
-reputation = "Repu111111111111111111111111111111111111111"
+reputation = "3zgKWzj7EP7fUjYo2iRdbAnXHS9cFdTKE1T7fa2gVrpT"
 
 [provider]
 cluster = "devnet"

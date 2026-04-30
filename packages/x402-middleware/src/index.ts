@@ -9,7 +9,7 @@ export type { VerifyResult } from "./verifier";
  *
  * @example
  * ```ts
- * import { buildSigilHeaders } from "@sigil/x402";
+ * import { buildSigilHeaders } from "@sigil-xyz/x402";
  * import { Keypair } from "@solana/web3.js";
  * import BN from "bn.js";
  *

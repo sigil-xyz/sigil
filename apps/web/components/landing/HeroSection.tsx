@@ -108,8 +108,8 @@ export function HeroSection() {
         >
           <div className="inline-flex items-center gap-3 font-mono text-[12px] md:text-[13px] bg-secondary/40 border border-border/50 rounded-full px-6 py-3 hover:bg-secondary/60 transition-colors cursor-default">
             <span className="text-muted-foreground/50 select-none">$</span>
-            <span className="text-foreground/80">bun add @sigil/sdk</span>
-            <CopyButton text="bun add @sigil/sdk" />
+            <span className="text-foreground/80">bun add @sigil-xyz/sdk</span>
+            <CopyButton text="bun add @sigil-xyz/sdk" />
           </div>
         </motion.div>
 
@@ -156,28 +156,42 @@ export function HeroSection() {
           </Link>
         </motion.div>
 
-        {/* Stats strip - Improved responsiveness */}
+        {/* Protocol primitives strip */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 1.2 }}
           className="w-full max-w-5xl mx-auto relative z-20 mt-auto"
         >
-          <div className="grid grid-cols-1 sm:grid-cols-3 items-center gap-y-8 px-6 py-8 md:px-10 md:py-10 bg-background/50 backdrop-blur-md rounded-[1.5rem] md:rounded-[2.5rem] border border-border/40 shadow-sm relative overflow-hidden group">
+          <div className="grid grid-cols-1 sm:grid-cols-3 items-stretch gap-y-0 bg-background/50 backdrop-blur-md rounded-[1.5rem] md:rounded-[2.5rem] border border-border/40 shadow-sm relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-tr from-foreground/[0.01] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             {[
-              { value: "847", label: "Active agents" },
-              { value: "12.4k", label: "Verified txns" },
-              { value: "$2.3M", label: "Protected daily" },
-            ].map((stat, i) => (
-              <div key={i} className="flex flex-col items-center relative">
-                {i > 0 && <div className="hidden sm:block absolute left-[-2px] top-1/2 -translate-y-1/2 w-[1px] h-10 bg-border/40" />}
-                <div className="font-mono text-[1.5rem] md:text-[1.75rem] font-medium text-foreground tabular-nums tracking-tighter">
-                  {stat.value}
-                </div>
-                <div className="text-[10px] md:text-[11px] font-mono tracking-[0.2em] text-foreground/40 font-bold uppercase mt-1 md:mt-2">
-                  {stat.label}
-                </div>
+              {
+                index: "01",
+                primitive: "Identity",
+                description: "Bind an agent keypair to its principal. Prove ownership on-chain.",
+              },
+              {
+                index: "02",
+                primitive: "Authorization",
+                description: "Scope capabilities, enforce spend limits, set expiry — in one credential.",
+              },
+              {
+                index: "03",
+                primitive: "Reputation",
+                description: "Every interaction recorded. Trust earned, not assumed.",
+              },
+            ].map((item, i) => (
+              <div key={i} className="flex flex-col gap-3 px-8 py-8 md:px-10 md:py-10 relative border-b sm:border-b-0 sm:border-r border-border/30 last:border-0">
+                <span className="font-mono text-[9px] tracking-[0.3em] text-foreground/25 uppercase">
+                  {item.index}
+                </span>
+                <span className="hero-display text-[1.6rem] md:text-[1.8rem] leading-none tracking-tight text-foreground">
+                  {item.primitive}
+                </span>
+                <p className="font-mono text-[10px] md:text-[11px] leading-relaxed text-foreground/40 tracking-wide">
+                  {item.description}
+                </p>
               </div>
             ))}
           </div>

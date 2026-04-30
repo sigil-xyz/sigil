@@ -11,7 +11,7 @@
   "dependencies": {
     "@base-ui/react": "^1.4.1",
     "@coral-xyz/anchor": "^0.32.1",
-    "@sigil/sdk": "file:../../packages/sdk",
+    "@sigil-xyz/sdk": "file:../../packages/sdk",
     "@solana/wallet-adapter-base": "^0.9.27",
     "@solana/wallet-adapter-phantom": "^0.9.29",
     "@solana/wallet-adapter-react": "^0.15.39",

@@ -2,7 +2,7 @@ import { PublicKey } from "@solana/web3.js";
 import nacl from "tweetnacl";
 import bs58 from "bs58";
 import BN from "bn.js";
-import { SigilClient } from "@sigil/sdk";
+import { SigilClient } from "@sigil-xyz/sdk";
 import type { SigilMiddlewareConfig } from "./types";
 
 export interface VerifyResult {

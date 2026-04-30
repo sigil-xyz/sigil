@@ -10,7 +10,7 @@ This guide walks through the two core flows: issuing a credential to an agent, a
 A principal calls `issueSigil` to create an on-chain credential for an agent keypair. The principal's wallet signs and pays for rent.
 
 ```ts
-import { SigilClient } from '@sigil/sdk'
+import { SigilClient } from '@sigil-xyz/sdk'
 import { PublicKey } from '@solana/web3.js'
 import BN from 'bn.js'
 
@@ -51,7 +51,7 @@ Add the middleware to your server. It verifies the agent's signature, checks the
   <Tab title="Express">
     ```ts
     import express from 'express'
-    import { createSigilMiddleware } from '@sigil/x402'
+    import { createSigilMiddleware } from '@sigil-xyz/x402'
     import BN from 'bn.js'
 
     const app = express()
@@ -74,7 +74,7 @@ Add the middleware to your server. It verifies the agent's signature, checks the
   <Tab title="Next.js App Router">
     ```ts
     // app/api/generate/route.ts
-    import { withSigilAuth } from '@sigil/x402/next'
+    import { withSigilAuth } from '@sigil-xyz/x402/next'
     import { NextResponse } from 'next/server'
     import BN from 'bn.js'
 
@@ -99,7 +99,7 @@ Add the middleware to your server. It verifies the agent's signature, checks the
 The agent signs each request using `buildSigilHeaders` and attaches the result as HTTP headers.
 
 ```ts
-import { buildSigilHeaders } from '@sigil/x402'
+import { buildSigilHeaders } from '@sigil-xyz/x402'
 import { Keypair } from '@solana/web3.js'
 import BN from 'bn.js'
 

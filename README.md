@@ -12,9 +12,9 @@
   </p>
 
   <p align="center">
-    <a href="https://sigil.xyz"><strong>Website</strong></a> |
-    <a href="https://dashboard.sigil.xyz"><strong>Dashboard</strong></a> |
-    <a href="https://docs.sigil.xyz"><strong>Documentation</strong></a>
+    <a href="https://sigil-three.vercel.app/"><strong>Website</strong></a> |
+    <a href="https://sigil-three.vercel.app/dashboard"><strong>Dashboard</strong></a> |
+    <a href="https://sigil-10dddbf2.mintlify.app/introduction"><strong>Documentation</strong></a>
   </p>
 
   <div align="center">
@@ -94,7 +94,7 @@ anchor build
 ### Quick Usage (SDK)
 
 ```typescript
-import { SigilClient } from '@sigil/sdk';
+import { SigilClient } from '@sigil-xyz/sdk';
 import { Connection } from '@solana/web3.js';
 import BN from 'bn.js';
 
@@ -111,7 +111,7 @@ const txSig = await client.issueSigil({
     perTx: new BN(100_000),  // 0.10 USDC (6 decimals)
     perDay: new BN(5_000_000), // 5.00 USDC
   },
-  expiresAt: new BN(Math.floor(Date.now() / 1000) + 86_400 * 30), // 30 days
+  expiresAt: Math.floor(Date.now() / 1000) + 86_400 * 30, // 30 days
 });
 ```
 
@@ -137,9 +137,9 @@ sigil/
 ---
 
 <div align="center">
-  <p>Built for the 2026 Agent Economy by Sigil Protocol.</p>
+  <p>Built for the Agent Economy by Sigil Protocol.</p>
   <p>
-    <a href="https://sigil.xyz">sigil.xyz</a> | 
+    <a href="https://sigil-three.vercel.app/">sigil.xyz</a> | 
     <a href="https://twitter.com/sigilprotocol">Twitter</a> | 
     <a href="https://github.com/sigil-xyz">GitHub</a>
   </p>

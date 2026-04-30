@@ -79,7 +79,7 @@ export class SigilClient {
         capabilities: encodeCapabilities(args.capabilities),
         spendLimitPerTx: args.spendLimits.perTx,
         spendLimitPerDay: args.spendLimits.perDay,
-        expiresAt: args.expiresAt,
+        expiresAt: new BN(args.expiresAt),
       })
       .accounts({
         sigil: sigilPda,
@@ -110,7 +110,7 @@ export class SigilClient {
       .updateSigil({
         spendLimitPerTx: args.spendLimits.perTx,
         spendLimitPerDay: args.spendLimits.perDay,
-        expiresAt: args.expiresAt,
+        expiresAt: new BN(args.expiresAt),
       })
       .accounts({
         sigil: sigilPda,
@@ -263,7 +263,7 @@ export class SigilClient {
   async updateStats(
     sigil: PublicKey,
     amount: BN,
-    success: bool
+    success: boolean
   ): Promise<web3.TransactionSignature> {
     const [listingPda] = this.listingPda(sigil);
 

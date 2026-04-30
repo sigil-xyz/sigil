@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-declare_id!("Repu111111111111111111111111111111111111111");
+declare_id!("3zgKWzj7EP7fUjYo2iRdbAnXHS9cFdTKE1T7fa2gVrpT");
 
 #[program]
 pub mod reputation {

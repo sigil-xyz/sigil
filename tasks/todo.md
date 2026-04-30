@@ -39,17 +39,19 @@
 - [ ] Fix DashboardView "$4.2M" hardcoded stat
 
 ## Batch 6 — Docs & Content
-- [ ] Fix README Quick Usage example (constructor, args, return type)
-- [ ] Fix README repo structure (add apps/docs, remove packages/mcp)
-- [ ] Fix README tagline "Built for the 2026 Agent Economy"
-- [ ] Fix concepts/registry.mdx: endpointUrl 64→128 bytes
-- [ ] Fix concepts/registry.mdx: reputationScore u16→u32
-- [ ] Label slashing/staking as roadmap in docs/introduction.mdx + concepts/reputation.mdx
-- [ ] Label MCP as coming soon or remove from README
-- [ ] Fix x402/overview.mdx: add x-sigil-principal to headers table
-- [ ] Fix AGENTS.md: remove invalid node_modules/next/dist/docs/ path
-- [ ] Fix Footer links: Blog, Privacy, Terms (remove or note as coming soon)
-- [ ] Fix update_stats.rs comment re: demo shortcut
+- [x] Fix README Quick Usage example (constructor, args, return type) — expiresAt was BN, now number
+- [x] Fix README repo structure (add apps/docs, remove packages/mcp) — already correct
+- [x] Fix README tagline "Built for the 2026 Agent Economy" — removed year
+- [x] Fix concepts/registry.mdx: endpointUrl 64→128 bytes — already correct
+- [x] Fix concepts/registry.mdx: reputationScore u16→u32 — already correct
+- [x] Label slashing/staking as roadmap in docs/introduction.mdx + concepts/reputation.mdx — already done
+- [x] Label MCP as coming soon or remove from README — already removed
+- [x] Fix x402/overview.mdx: add x-sigil-principal to headers table — already present
+- [x] Fix AGENTS.md: remove invalid node_modules/next/dist/docs/ path — already clean
+- [x] Fix Footer links: Blog, Privacy, Terms — Blog→GitHub discussions, Privacy/Terms→email, all valid
+- [x] Fix update_stats.rs comment re: demo shortcut — comment already accurate
+- [x] Fix StatsSection fake stat descriptions ("live on mainnet" → "at scale")
+- [x] Update README links to vercel/mintlify URLs
 
 ## Status
 - Started: 2026-04-29
