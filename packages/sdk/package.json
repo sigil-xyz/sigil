@@ -1,11 +1,25 @@
 {
   "name": "@sigil-xyz/sdk",
-  "version": "0.1.0",
-  "description": "TypeScript SDK for the Sigil protocol",
+  "version": "0.1.3",
+  "description": "TypeScript SDK for the Sigil protocol — cryptographic identity and trust infrastructure for AI agents on Solana",
+  "keywords": [
+    "sigil",
+    "solana",
+    "ai-agent",
+    "agent-identity",
+    "credential",
+    "web3",
+    "anchor",
+    "typescript",
+    "blockchain",
+    "defi"
+  ],
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch"

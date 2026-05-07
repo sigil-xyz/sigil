@@ -7,6 +7,23 @@ description: HTTP middleware for gating API endpoints with Sigil credentials.
 
 ## How it works
 
+```mermaid
+sequenceDiagram
+    participant A as Agent
+    participant API as Protected API
+    participant SOL as Solana
+
+    A->>A: buildSigilHeaders(keypair, method, path, amount)
+    A->>API: POST /endpoint + x-sigil-* headers
+    API->>API: verify ed25519 signature
+    API->>API: check timestamp (replay guard)
+    API->>SOL: verifySigil(agent, capability, maxSpend)
+    SOL-->>API: credential valid
+    API->>SOL: recordSpend(agent, amount)
+    SOL-->>API: spend recorded
+    API-->>A: 200 OK
+```
+
 <Steps>
   <Step title="Agent builds signed headers">
     The agent calls `buildSigilHeaders` with its keypair, the principal public key, the request method, path, and spend amount. This produces four HTTP headers containing the agent's public key, the principal's public key, a timestamp, and an ed25519 signature.

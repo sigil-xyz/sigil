@@ -27,17 +27,22 @@ Sigil solves this with three primitives.
 
 ## How it fits together
 
-```
-Principal (human / org)
-  │
-  │  issues
-  ▼
-Sigil Credential  ─────────────────────────────────────────────┐
-  │  (agent pubkey, capabilities, spend limits, expiry)        │
-  │                                                            │
-  │  agent calls service                                       │ service verifies
-  ▼                                                            │ on-chain
-Agent ──── x-sigil-* headers ────► Protected API ◄─────────────┘
+```mermaid
+flowchart TD
+    P(["Principal (human / org)"])
+    C(["Sigil Credential"])
+    A(["Agent"])
+    API(["Protected API"])
+
+    P -- issues --> C
+    C -- bound to --> A
+    A -- "x-sigil-* headers" --> API
+    API -. "verifies on-chain" .-> C
+
+    style P   fill:#6366f1,stroke:#4f46e5,color:#fff
+    style C   fill:#1e3a5f,stroke:#3b82f6,color:#bfdbfe
+    style A   fill:#064e3b,stroke:#059669,color:#a7f3d0
+    style API fill:#4c1d95,stroke:#7c3aed,color:#ddd6fe
 ```
 
 An agent attaches three signed headers to every request. The server's middleware verifies the ed25519 signature, checks the on-chain Sigil, and records the spend — all in a single call.
