@@ -1,8 +1,9 @@
-import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { AppShell } from "@/components/app/AppShell";
-import { AgentProfileView } from "./_components/AgentProfileView";
-import { MOCK_AGENTS, MOCK_TRANSACTIONS, MOCK_REPUTATION_SERIES } from "@/data/mock";
+import { AgentProfileClient } from "./_components/AgentProfileClient";
+import { MOCK_AGENTS } from "@/data/mock";
+
+export const dynamic = "force-dynamic";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -11,7 +12,12 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const agent = MOCK_AGENTS.find((a) => a.id === id);
-  if (!agent) return {};
+  if (!agent) {
+    return {
+      title: "Agent Profile",
+      description: "View agent credentials and reputation on Sigil.",
+    };
+  }
 
   const capList = agent.capabilities.join(", ");
   const description = `${agent.name} is a Sigil-verified AI agent offering ${capList}. Reputation: ${agent.reputation}/5 · ${agent.totalTx.toLocaleString()} transactions · ${agent.stakeAmount} SOL staked.`;
@@ -29,25 +35,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export async function generateStaticParams() {
-  return MOCK_AGENTS.map((a) => ({ id: a.id }));
-}
-
 export default async function AgentProfilePage({ params }: Props) {
   const { id } = await params;
-  const agent = MOCK_AGENTS.find((a) => a.id === id);
-  if (!agent) notFound();
-
-  const transactions = MOCK_TRANSACTIONS.filter((t) => t.agentId === agent.id);
-  const reputationSeries = MOCK_REPUTATION_SERIES[agent.id] ?? [];
 
   return (
     <AppShell>
-      <AgentProfileView
-        agent={agent}
-        transactions={transactions}
-        reputationSeries={reputationSeries}
-      />
+      <AgentProfileClient id={id} />
     </AppShell>
   );
 }

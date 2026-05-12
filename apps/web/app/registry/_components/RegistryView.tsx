@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, SlidersHorizontal, X, ArrowUpRight, Globe, Zap, Cpu, Activity, ShieldCheck, Database } from "lucide-react";
+import { Search, SlidersHorizontal, X, ArrowUpRight, Globe, Zap, Cpu, Activity, ShieldCheck, Database, ChevronDown } from "lucide-react";
 import { CapabilityBadge } from "@/components/app/CapabilityBadge";
 import { ReputationStars } from "@/components/app/ReputationStars";
 import { SectionReveal } from "@/components/app/SectionReveal";
@@ -68,6 +68,69 @@ const SORT_OPTIONS = [
 ] as const;
 
 type SortKey = (typeof SORT_OPTIONS)[number]["value"];
+
+function SortDropdown({ value, onChange }: { value: SortKey; onChange: (v: SortKey) => void }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const current = SORT_OPTIONS.find((o) => o.value === value)!;
+
+  useEffect(() => {
+    function onClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
+  }, []);
+
+  return (
+    <div ref={ref} className="lg:flex-none relative">
+      <button
+        onClick={() => setOpen((p) => !p)}
+        className={cn(
+          "h-16 md:h-20 pl-6 md:pl-10 pr-8 flex items-center gap-3 font-mono text-[10px] md:text-[11px] uppercase tracking-[0.2em] font-bold transition-colors whitespace-nowrap",
+          open ? "bg-foreground/5 text-foreground" : "text-foreground hover:bg-foreground/[0.02]"
+        )}
+      >
+        {current.label}
+        <ChevronDown
+          size={12}
+          strokeWidth={2}
+          className={cn("text-muted-foreground/50 transition-transform duration-200", open && "rotate-180")}
+        />
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
+            className="absolute right-0 top-full mt-px w-full min-w-[200px] border border-border/60 bg-background z-50 shadow-lg"
+          >
+            {SORT_OPTIONS.map((o) => (
+              <button
+                key={o.value}
+                onClick={() => { onChange(o.value); setOpen(false); }}
+                className={cn(
+                  "w-full flex items-center justify-between px-6 py-3.5 font-mono text-[10px] uppercase tracking-[0.2em] transition-colors text-left",
+                  o.value === value
+                    ? "bg-foreground/5 text-foreground font-bold"
+                    : "text-muted-foreground hover:bg-foreground/[0.02] hover:text-foreground"
+                )}
+              >
+                {o.label}
+                {o.value === value && (
+                  <span className="w-1 h-1 rounded-full bg-foreground" />
+                )}
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 function AgentNode({ agent, index }: { agent: Agent; index: number }) {
   return (
@@ -263,7 +326,7 @@ export function RegistryView() {
 
         {/* Command Palette Style Search */}
         <SectionReveal delay={0.04}>
-          <div className="flex flex-col lg:flex-row gap-0 border border-border/40 bg-foreground/[0.01] mb-12 relative z-20 shadow-sm">
+          <div className="flex flex-col lg:flex-row gap-0 border border-border/40 bg-foreground/[0.01] mb-12 shadow-sm">
             <div className="relative flex-1 group border-b lg:border-b-0 lg:border-r border-border/40">
               <Search size={18} strokeWidth={2} className="absolute left-6 top-1/2 -translate-y-1/2 text-muted-foreground/60 group-focus-within:text-foreground transition-colors" />
               <input
@@ -289,22 +352,7 @@ export function RegistryView() {
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 )}
               </button>
-              <div className="flex-1 lg:flex-none relative">
-                <select
-                  value={sortKey}
-                  onChange={(e) => setSortKey(e.target.value as SortKey)}
-                  className="w-full h-16 md:h-20 pl-6 md:pl-10 pr-12 bg-transparent text-foreground text-[10px] md:text-[11px] font-mono uppercase tracking-[0.2em] focus:outline-none hover:bg-foreground/[0.02] transition-colors appearance-none cursor-pointer font-bold"
-                >
-                  {SORT_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
-                <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none opacity-40">
-                  <X size={14} className="rotate-45" strokeWidth={2.5} />
-                </div>
-              </div>
+              <SortDropdown value={sortKey} onChange={setSortKey} />
             </div>
           </div>
         </SectionReveal>
@@ -317,7 +365,7 @@ export function RegistryView() {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className="overflow-hidden mb-12 -mt-12 relative z-10"
+              className="overflow-hidden mb-12 -mt-12"
             >
               <div className="pt-12 border-x border-b border-border/40 bg-foreground/[0.005] p-8 md:p-10 space-y-10">
                 <div className="flex items-center justify-between border-b border-border/20 pb-4">
@@ -406,7 +454,13 @@ export function RegistryView() {
 
         {/* List Display */}
         <div className="border-t border-border/40">
-          {filtered.length === 0 ? (
+          {registryLoading ? (
+            <div className="py-32 flex items-center justify-center">
+              <span className="font-mono text-[11px] text-muted-foreground/40 uppercase tracking-widest animate-pulse">
+                Scanning network...
+              </span>
+            </div>
+          ) : filtered.length === 0 ? (
             <div className="py-32 text-center flex flex-col items-center bg-foreground/[0.005]">
               <Zap size={48} strokeWidth={1} className="text-muted-foreground/10 mb-8" />
               <span className="font-mono text-[12px] text-muted-foreground/60 mb-4 tracking-widest uppercase">
@@ -431,6 +485,7 @@ export function RegistryView() {
               </AnimatePresence>
             </motion.div>
           )}
+
         </div>
       </div>
     </div>
